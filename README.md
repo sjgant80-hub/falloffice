@@ -1,4 +1,4 @@
-# FallForce Agents — Sovereign AI Office
+# FallOffice — Sovereign AI Office
 
 **8 specialist AI agents replacing a full Sales + Marketing team. One HTML file. No server. No subscription.**
 
@@ -10,7 +10,7 @@ Open it in a browser. Pick an agent. Start working. Every conversation, every pi
 
 ## The economics
 
-| | Traditional Team | FallForce Agents |
+| | Traditional Team | FallOffice |
 |---|---|---|
 | 2x SDRs | £70,000 | — |
 | Content Writer | £45,000 | — |
@@ -21,7 +21,7 @@ Open it in a browser. Pick an agent. Start working. Every conversation, every pi
 | | | |
 | **Annual savings** | | **£213,600+** |
 
-Gemini API has a free tier. DeepSeek costs pennies. The tool works offline with zero API keys in fallback mode.
+Use any AI provider you want — Claude, ChatGPT, Gemini, DeepSeek — or run Llama 3.2 entirely in your browser with WebLLM. Zero API keys needed for offline mode.
 
 ---
 
@@ -65,13 +65,16 @@ Every agent receives your company context, ICP, and brand voice automatically. T
 
 ### AI cascade
 
-The tool always works, even with no internet:
+The tool always works, even with no internet. It tries each provider in order and uses the first one that responds:
 
-- **Primary: Gemini 2.0 Flash** — fast, capable, free tier available
-- **Secondary: DeepSeek** — strong alternative, very cheap
-- **Fallback: Echo** — offline mode that outlines what the agent would do and guides you through structured thinking
+1. **Claude** (Anthropic) — best quality, strongest reasoning
+2. **ChatGPT** (OpenAI) — fast, widely used
+3. **Gemini** (Google) — free tier available
+4. **DeepSeek** — very cheap, strong alternative
+5. **WebLLM** — Llama 3.2 3B running entirely in your browser. No API key. Fully offline. One-click load
+6. **Echo** — offline fallback that outlines what the agent would do and guides you through structured thinking
 
-Set API keys in Settings. No keys? It still works in offline mode.
+Add any combination of API keys in Settings. One key is enough. No keys at all? Load WebLLM for in-browser AI, or use Echo mode — it still works.
 
 ---
 
@@ -79,7 +82,7 @@ Set API keys in Settings. No keys? It still works in offline mode.
 
 1. Open `index.html` in Chrome, Edge, Safari, or Firefox
 2. Click **⊙ Settings**
-3. Add a Gemini API key (free at [ai.google.dev](https://ai.google.dev))
+3. Add any API key — Claude, ChatGPT, Gemini, or DeepSeek (or load WebLLM for fully offline AI)
 4. Enter your company name, description, and ICP
 5. Close settings
 6. Click **Scout** → type a company name → get structured research
@@ -93,7 +96,7 @@ That's the workflow. Scout finds them. Composer writes to them. Sequencer plans 
 
 - **8 specialist agents** with custom system prompts
 - **Shared company context** — set once, every agent knows your business
-- **AI cascade** — Gemini → DeepSeek → offline fallback
+- **API-agnostic AI cascade** — Claude → ChatGPT → Gemini → DeepSeek → WebLLM (in-browser) → Echo (offline)
 - **Independent chat histories** per agent, persisted in localStorage
 - **8 KPI metrics** that increment as agents produce work
 - **Dark/light theme** toggle
@@ -125,11 +128,11 @@ Your client data never touches our servers. Because there are no servers.
 
 ## What this is NOT
 
-This is **not** FallForce CRM (FallCRM Elite v3). That's the pipeline/contacts/deals platform. This is the **AI team** — 8 agents that generate the work. Different products. Both sovereign. Both single-file.
+This is **not** FallForce CRM (FallCRM Elite v3). That's the pipeline/contacts/deals platform. This is the **AI office** — 8 agents that generate the work. Different products. Both sovereign. Both single-file.
 
 | Product | Purpose | Repo |
 |---|---|---|
-| **FallForce Agents** | AI team — generates content, research, outreach | This repo |
+| **FallOffice** | AI office — generates content, research, outreach | This repo |
 | **FallForce CRM** | Sales platform — pipeline, contacts, deals, forecasting | [fallforce](https://github.com/sjgant80-hub/fallforce) |
 
 ---

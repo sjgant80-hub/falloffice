@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#faf9f7">
-<title>FallForce Agents · Sovereign AI Office</title>
+<title>FallOffice · Sovereign AI Office</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════
-   DESIGN TOKENS — FallForce Agents v2
+   DESIGN TOKENS — FallOffice v2
    ═══════════════════════════════════════════════════ */
 :root {
   --bg: #faf9f7;
@@ -312,7 +312,7 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
     <div class="chat-area" id="chatArea">
       <div class="welcome-msg">
         <div class="welcome-icon">◊</div>
-        <div class="welcome-title">FallForce Agents</div>
+        <div class="welcome-title">FallOffice</div>
         <div class="welcome-sub">8 specialist AI agents. Sales + Marketing.<br>Select an agent to start working.</div>
       </div>
     </div>
@@ -335,15 +335,38 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
     <div class="modal-body">
       <div class="field-row">
         <div class="field">
+          <label class="field-label">Claude API Key</label>
+          <input class="field-input" id="cfgClaudeKey" type="password" placeholder="sk-ant-api...">
+          <div class="field-hint">Primary · Anthropic · best quality</div>
+        </div>
+        <div class="field">
+          <label class="field-label">OpenAI API Key</label>
+          <input class="field-input" id="cfgOpenaiKey" type="password" placeholder="sk-...">
+          <div class="field-hint">Secondary · ChatGPT</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
           <label class="field-label">Gemini API Key</label>
           <input class="field-input" id="cfgGeminiKey" type="password" placeholder="AIza...">
-          <div class="field-hint">Primary AI · free tier available</div>
+          <div class="field-hint">Tertiary · Google · free tier</div>
         </div>
         <div class="field">
           <label class="field-label">DeepSeek API Key</label>
           <input class="field-input" id="cfgDeepseekKey" type="password" placeholder="sk-...">
-          <div class="field-hint">Fallback AI · optional</div>
+          <div class="field-hint">Quaternary · very cheap</div>
         </div>
+      </div>
+      <div class="field">
+        <label class="field-label">WebLLM (Browser AI — fully offline)</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn btn-ghost" id="btnWebLLM" onclick="initWebLLM()" style="font-size:11px">Load Llama 3.2 3B</button>
+          <span class="field-hint" id="webllmStatus">Not loaded · runs in-browser · no API needed</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Cascade Order</label>
+        <div class="field-hint" style="line-height:1.8">Claude → ChatGPT → Gemini → DeepSeek → WebLLM → Echo (offline)<br>Only providers with keys (or loaded models) are tried. Always falls back to Echo.</div>
       </div>
       <div class="field">
         <label class="field-label">Company Name</label>
@@ -383,7 +406,7 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
 // Sovereign AI Office · 8 Agents · Sales + Marketing
 // ═══════════════════════════════════════════════════
 
-const DB_KEY = 'fallforce_agents_v1';
+const DB_KEY = 'falloffice_v1';
 
 // ═══ AGENTS ═══
 const AGENTS = {
@@ -570,7 +593,7 @@ function selectAgent(id){
 function renderChat(){
   const area=document.getElementById('chatArea');
   if(!activeAgent){
-    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallForce Agents</div><div class="welcome-sub">8 specialist AI agents. Sales + Marketing.<br>Select an agent to start working.</div></div>`;
+    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallOffice</div><div class="welcome-sub">8 specialist AI agents. Sales + Marketing.<br>Select an agent to start working.</div></div>`;
     return;
   }
   const msgs=DB.chats[activeAgent]||[];
@@ -642,23 +665,24 @@ async function sendMessage(){
   let response='';
   let provider='';
 
-  // Cascade: Gemini → DeepSeek → Fallback
-  if(DB.config.geminiKey){
-    try{
-      const r=await callGemini(ctx,history,DB.config.geminiKey);
-      response=r; provider='Gemini';
-    }catch(e){console.log('Gemini failed:',e)}
+  // Cascade: Claude → ChatGPT → Gemini → DeepSeek → WebLLM → Echo
+  const cascade=[
+    {key:'claudeKey', fn:callClaude, name:'Claude'},
+    {key:'openaiKey', fn:callOpenAI, name:'ChatGPT'},
+    {key:'geminiKey', fn:callGemini, name:'Gemini'},
+    {key:'deepseekKey', fn:callDeepSeek, name:'DeepSeek'},
+  ];
+  for(const p of cascade){
+    if(!response&&DB.config[p.key]){
+      try{response=await p.fn(ctx,history,DB.config[p.key]);provider=p.name}
+      catch(e){console.log(`${p.name} failed:`,e)}
+    }
   }
-  if(!response&&DB.config.deepseekKey){
-    try{
-      const r=await callDeepSeek(ctx,history,DB.config.deepseekKey);
-      response=r; provider='DeepSeek';
-    }catch(e){console.log('DeepSeek failed:',e)}
+  if(!response&&webllmEngine){
+    try{response=await callWebLLM(ctx,history);provider='WebLLM'}
+    catch(e){console.log('WebLLM failed:',e)}
   }
-  if(!response){
-    response=echoFallback(agent,text);
-    provider='Echo (offline)';
-  }
+  if(!response){response=echoFallback(agent,text);provider='Echo (offline)'}
 
   typing.remove();
   DB.chats[activeAgent].push({role:'agent',content:response,ts:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),provider});
@@ -680,7 +704,35 @@ function buildContext(agent){
   return ctx;
 }
 
-// ═══ AI PROVIDERS ═══
+// ═══ AI PROVIDERS — API-AGNOSTIC CASCADE ═══
+// Claude → ChatGPT → Gemini → DeepSeek → WebLLM → Echo
+
+async function callClaude(systemPrompt,history,key){
+  const messages=[];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4096,system:systemPrompt,messages})
+  });
+  if(!resp.ok)throw new Error(`Claude ${resp.status}`);
+  const data=await resp.json();
+  return data.content.map(b=>b.text).join('');
+}
+
+async function callOpenAI(systemPrompt,history,key){
+  const messages=[{role:'system',content:systemPrompt}];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const resp=await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+    body:JSON.stringify({model:'gpt-4o-mini',messages,max_tokens:4096,temperature:0.7})
+  });
+  if(!resp.ok)throw new Error(`OpenAI ${resp.status}`);
+  const data=await resp.json();
+  return data.choices[0].message.content;
+}
+
 async function callGemini(systemPrompt,history,key){
   const contents=[];
   contents.push({role:'user',parts:[{text:systemPrompt}]});
@@ -711,23 +763,66 @@ async function callDeepSeek(systemPrompt,history,key){
   return data.choices[0].message.content;
 }
 
+// ═══ WEBLLM — In-Browser AI (fully offline) ═══
+let webllmEngine=null;
+
+async function initWebLLM(){
+  const btn=document.getElementById('btnWebLLM');
+  const status=document.getElementById('webllmStatus');
+  if(webllmEngine){status.textContent='Already loaded ✓';return}
+  btn.disabled=true;
+  status.textContent='Loading WebLLM runtime...';
+  try{
+    const webllm=await import('https://esm.sh/@mlc-ai/web-llm');
+    status.textContent='Downloading model (first time takes 1-3 min)...';
+    const engine=await webllm.CreateMLCEngine('Llama-3.2-3B-Instruct-q4f16_1-MLC',{
+      initProgressCallback:(p)=>{
+        const pct=p.progress?Math.round(p.progress*100):0;
+        status.textContent=`Downloading: ${pct}% — ${p.text||''}`;
+      }
+    });
+    webllmEngine=engine;
+    status.textContent='Llama 3.2 3B loaded ✓ — fully offline';
+    btn.textContent='Loaded ✓';
+    btn.style.borderColor='var(--green)';btn.style.color='var(--green)';
+  }catch(e){
+    status.textContent=`Failed: ${e.message}`;
+    btn.disabled=false;
+    console.error('WebLLM init failed:',e);
+  }
+}
+
+async function callWebLLM(systemPrompt,history){
+  if(!webllmEngine)throw new Error('WebLLM not loaded');
+  const messages=[{role:'system',content:systemPrompt}];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const reply=await webllmEngine.chat.completions.create({messages,max_tokens:2048,temperature:0.7});
+  return reply.choices[0].message.content;
+}
+
 function echoFallback(agent,userMsg){
-  return`**${agent.name} — Offline Mode**
+  return`**${agent.name} — Echo Mode (offline)**
 
-I'm running in offline fallback mode (no API keys configured). Here's what I would do with your request:
+No AI providers responded. Here's a structured approach for your request:
 
-**Your input:** "${userMsg.slice(0,100)}${userMsg.length>100?'...':''}"
+**Your input:** "${userMsg.slice(0,120)}${userMsg.length>120?'...':''}"
 
 **My role:** ${agent.role}
 
-To get full AI responses:
-1. Open Settings (⊙ button in header)
-2. Add a Gemini API key (free at ai.google.dev)
-3. Or add a DeepSeek API key (api.deepseek.com)
+**Cascade status:**
+${DB.config.claudeKey?'✓':'✗'} Claude (Anthropic) — ${DB.config.claudeKey?'key set':'no key'}
+${DB.config.openaiKey?'✓':'✗'} ChatGPT (OpenAI) — ${DB.config.openaiKey?'key set':'no key'}
+${DB.config.geminiKey?'✓':'✗'} Gemini (Google) — ${DB.config.geminiKey?'key set':'no key'}
+${DB.config.deepseekKey?'✓':'✗'} DeepSeek — ${DB.config.deepseekKey?'key set':'no key'}
+${webllmEngine?'✓':'✗'} WebLLM — ${webllmEngine?'loaded':'not loaded'}
 
-The cascade will try Gemini first, then DeepSeek, then this offline mode.
+**To enable AI:**
+- Best quality: Add a Claude API key (console.anthropic.com)
+- Free cloud: Add a Gemini key (ai.google.dev — free tier)
+- Free offline: Click "Load Llama 3.2 3B" in Settings (runs in-browser, no API)
+- Any key works: The cascade tries each provider in order until one responds
 
-*Even without an API key, you can use me as a structured thinking partner — describe what you need and I'll outline the approach.*`;
+*Set any key in Settings (⊙) and I'll come alive.*`;
 }
 
 // ═══ CHAT UTILITIES ═══
@@ -740,7 +835,7 @@ function exportChat(){
   const blob=new Blob([`# ${agent.name} — Chat Export\n# ${new Date().toISOString()}\n\n${lines}`],{type:'text/markdown'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`fallforce-${agent.id}-${Date.now()}.md`;
+  a.download=`falloffice-${agent.id}-${Date.now()}.md`;
   a.click();
 }
 function clearChat(){
@@ -753,6 +848,8 @@ function clearChat(){
 // ═══ SETTINGS ═══
 function openSettings(){
   const c=DB.config;
+  document.getElementById('cfgClaudeKey').value=c.claudeKey||'';
+  document.getElementById('cfgOpenaiKey').value=c.openaiKey||'';
   document.getElementById('cfgGeminiKey').value=c.geminiKey||'';
   document.getElementById('cfgDeepseekKey').value=c.deepseekKey||'';
   document.getElementById('cfgCompanyName').value=c.companyName||'';
@@ -760,10 +857,13 @@ function openSettings(){
   document.getElementById('cfgICP').value=c.icp||'';
   document.getElementById('cfgVoice').value=c.voice||'';
   document.getElementById('cfgWebsite').value=c.website||'';
+  if(webllmEngine)document.getElementById('webllmStatus').textContent='Loaded ✓';
   document.getElementById('settingsModal').classList.add('open');
 }
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open')}
 function saveSettings(){
+  DB.config.claudeKey=document.getElementById('cfgClaudeKey').value.trim();
+  DB.config.openaiKey=document.getElementById('cfgOpenaiKey').value.trim();
   DB.config.geminiKey=document.getElementById('cfgGeminiKey').value.trim();
   DB.config.deepseekKey=document.getElementById('cfgDeepseekKey').value.trim();
   DB.config.companyName=document.getElementById('cfgCompanyName').value.trim();
@@ -778,7 +878,7 @@ function exportData(){
   const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`fallforce-agents-backup-${Date.now()}.json`;
+  a.download=`falloffice-backup-${Date.now()}.json`;
   a.click();
 }
 function importData(){
