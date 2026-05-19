@@ -44,6 +44,16 @@
   --radius: 10px;
   --radius-lg: 14px;
   --transition: 0.18s cubic-bezier(0.4,0,0.2,1);
+  /* ◊·κ=1 — Bloom Ring Colours (R0-R6 · primes 2,3,5,7,11,13,17) */
+  --r0: #660044; /* ground · 2 */
+  --r1: #00AAFF; /* signal · 3 */
+  --r2: #FFAA00; /* gate · 5 */
+  --r3: #FF4444; /* heart · 7 */
+  --r4: #44AA44; /* voice · 11 */
+  --r5: #AA44FF; /* mirror · 13 */
+  --r6: #FFFFFF; /* watcher · 17 */
+  --phi: 1.618;
+  --kappa: 0.618;
 }
 [data-theme="dark"] {
   --bg: #0d0d0b;
@@ -261,6 +271,8 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
 </head>
 <body>
 
+<!-- ◊·κ=1 · face(template(tag)) · LAYER 6: SKIN -->
+<!-- R0: GROUND — app shell, navigation, identity -->
 <!-- ═══════════════════════════════════════════════════
      HEADER
      ═══════════════════════════════════════════════════ -->
@@ -281,7 +293,7 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
 <!-- ═══════════════════════════════════════════════════
      METRICS BAR
      ═══════════════════════════════════════════════════ -->
-<div class="metrics-bar" id="metricsBar"></div>
+<div class="metrics-bar" id="metricsBar" data-face="metrics" data-ring="1"></div>
 
 <!-- ═══════════════════════════════════════════════════
      SAVINGS BANNER
@@ -294,11 +306,13 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
   <div class="savings-tag">8+1 AI AGENTS · 2 TEAMS · 1 ORCHESTRATOR · 1 FILE</div>
 </div>
 
+<!-- R4: VOICE — agent workspace, output generation -->
+<!-- LAYER 2: SWARM — 8+1 MACCubeFACE (Ω + α-θ) -->
 <!-- ═══════════════════════════════════════════════════
      MAIN — AGENTS + WORKSPACE
      ═══════════════════════════════════════════════════ -->
 <div class="main">
-  <div class="agents-panel" id="agentsPanel"></div>
+  <div class="agents-panel" id="agentsPanel" data-face="agents" data-ring="2"></div>
   <div class="workspace" id="workspace">
     <div class="ws-header" id="wsHeader">
       <div class="ws-agent-info">
@@ -313,7 +327,7 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
         <button class="ws-btn" onclick="clearChat()" title="Clear history">✕ Clear</button>
       </div>
     </div>
-    <div class="chat-area" id="chatArea">
+    <div class="chat-area" id="chatArea" data-face="workspace" data-ring="4">
       <div class="welcome-msg">
         <div class="welcome-icon">◊</div>
         <div class="welcome-title">FallOffice</div>
@@ -327,6 +341,9 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
   </div>
 </div>
 
+<!-- R2: GATE — configuration, validation, API keys -->
+<!-- LAYER 3: CASCADE — T0→T1→T2→T3 provider config -->
+<!-- LAYER 5: PERSIST — export/import/reset -->
 <!-- ═══════════════════════════════════════════════════
      SETTINGS MODAL
      ═══════════════════════════════════════════════════ -->
@@ -406,11 +423,42 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
 
 <script>
 // ═══════════════════════════════════════════════════
-// ◊·κ=1 — FALLOFFICE v2
+// ◊·κ=1 — FALLOFFICE v2 · Seed v16.3 Compliant
 // Sovereign AI Office · 8+1 Agents · Sales + Marketing + Orchestrator
+// face(template(tag)) · 7 layers · bloom routing · sovereign data
 // ═══════════════════════════════════════════════════
 
-const DB_KEY = 'falloffice_v1';
+// ═══ KONOMI CONSTANTS ═══
+const PHI    = 1.618033988749895;        // φ golden ratio
+const KAPPA  = 0.618033988749895;        // κ = 1/φ
+const SPINE  = [2,3,5,7,11,13,17];       // prime spine (bloom ring primes)
+const FOLD   = 510510;                    // primorial constant (2×3×5×7×11×13×17)
+const BLOOM_LABELS = ['ground','signal','gate','heart','voice','mirror','watcher']; // R0-R6
+
+// ═══ LIFECYCLE (ASS) ═══
+// ●=first open 〜=config ┃=signal ♡=heart △=voice ◐=mirror ◯=bloom
+const LIFECYCLE = ['●','〜','┃','♡','△','◐','◯'];
+const LIFECYCLE_NAMES = ['first-open','config','signal','heart','voice','mirror','bloom'];
+
+// ═══ AGENT ARCHETYPES (α-θ → domain mapping) ═══
+// Ω=orchestrator α=research β=compose γ=sequence δ=analyse ε=write ζ=distribute η=optimise θ=target
+const ARCHETYPE = {o1:'Ω',s1:'α',s2:'β',s3:'γ',s4:'δ',m1:'ε',m2:'ζ',m3:'η',m4:'θ'};
+
+// ═══ INTEROP NAMESPACE ═══
+const INTEROP_PREFIX = 'fall_';
+const TOOL_NAME = 'falloffice';
+const DB_KEY = 'fall_falloffice_v1';
+const SHARED_KEYS = {
+  contacts:'fall_shared_contacts',
+  company:'fall_shared_company',
+  bloom:'fall_shared_bloom',
+  settings:'fall_shared_settings'
+};
+const BROADCAST_CHANNELS = {
+  signal: new BroadcastChannel('fall-signal'),
+  data:   new BroadcastChannel('fall-data'),
+  bloom:  new BroadcastChannel('fall-bloom')
+};
 
 // ═══ AGENTS ═══
 const AGENTS = {
@@ -563,19 +611,114 @@ const METRICS = [
 ];
 
 // ═══ STATE ═══
-let DB = {metrics:{},chats:{},config:{}};
+let DB = {metrics:{},chats:{},config:{},bloom:[0,0,0,0,0,0,0],lifecycle:0};
 let activeAgent = null;
 let isGenerating = false;
 
 function load(){
-  try{const s=localStorage.getItem(DB_KEY);if(s)DB=JSON.parse(s)}catch(e){}
+  // Try new key first, fall back to old key for migration
+  try{
+    let s=localStorage.getItem(DB_KEY);
+    if(!s){s=localStorage.getItem('falloffice_v1');if(s)localStorage.removeItem('falloffice_v1')} // migrate
+    if(s)DB=JSON.parse(s);
+  }catch(e){}
   if(!DB.metrics)DB.metrics={};
   if(!DB.chats)DB.chats={};
   if(!DB.config)DB.config={};
+  if(!DB.bloom)DB.bloom=[0,0,0,0,0,0,0];
+  if(DB.lifecycle===undefined)DB.lifecycle=0;
   METRICS.forEach(m=>{if(!DB.metrics[m.id])DB.metrics[m.id]=0});
   Object.keys(AGENTS).forEach(k=>{if(!DB.chats[k])DB.chats[k]=[]});
+  // Sync shared company context for interop
+  syncSharedData();
+  // Advance lifecycle
+  advanceLifecycle();
 }
-function save(){localStorage.setItem(DB_KEY,JSON.stringify(DB))}
+function save(){
+  localStorage.setItem(DB_KEY,JSON.stringify(DB));
+  syncSharedData();
+}
+
+// ═══ BLOOM DECOMPOSITION — B(Q)=[r0..r6] ═══
+// R0=ground R1=signal R2=gate R3=heart R4=voice R5=mirror R6=watcher
+function bloomDecompose(text){
+  const t=text.toLowerCase();
+  const v=[0,0,0,0,0,0,0];
+  // R0 ground: factual queries, data, research, who/what/where
+  if(/\b(who|what|where|when|how many|research|find|look up|info|data|company|tell me about)\b/.test(t))v[0]+=SPINE[0];
+  // R1 signal: alerts, news, detection, what's happening
+  if(/\b(alert|notify|signal|news|update|happening|trending|change|detect)\b/.test(t))v[1]+=SPINE[1];
+  // R2 gate: filter, validate, score, qualify, decision
+  if(/\b(filter|score|qualify|valid|check|assess|rank|evaluate|criteria|fit)\b/.test(t))v[2]+=SPINE[2];
+  // R3 heart: emotional, help me, stuck, personal, relationships
+  if(/\b(help|stuck|feel|worried|excited|love|hate|frustrat|personal|relationship|team)\b/.test(t))v[3]+=SPINE[3];
+  // R4 voice: write, create, compose, draft, generate, produce
+  if(/\b(write|create|compose|draft|generate|produce|build|design|make|content|post|article|blog|email|message|ad|copy)\b/.test(t))v[4]+=SPINE[4];
+  // R5 mirror: review, improve, refine, edit, feedback, analyse
+  if(/\b(review|improve|refine|edit|feedback|analyse|analyze|better|optimise|optimize|fix|revise)\b/.test(t))v[5]+=SPINE[5];
+  // R6 watcher: meta, strategy, plan, overview, system, architecture
+  if(/\b(strategy|plan|overview|system|architecture|calendar|sequence|cadence|campaign|pipeline|forecast)\b/.test(t))v[6]+=SPINE[6];
+  return v;
+}
+function bloomRoute(vector){
+  // Find highest activated ring → maps to agent archetype
+  let max=0,ring=0;
+  for(let i=0;i<7;i++){if(vector[i]>max){max=vector[i];ring=i}}
+  // Ring→agent mapping: R0→α(scout) R1→α R2→δ(analyst) R3→Ω(omega) R4→β/ε(composer/writer) R5→η(seo) R6→γ(sequencer)
+  const ringAgent=['s1','s1','s4','o1','s2','m3','s3'];
+  // If R4 is dominant, check for specific voice sub-types
+  if(ring===4&&vector[4]>0){
+    // Further differentiate: social vs blog vs ads vs email
+    const t=vector.toString(); // proxy
+    return 's2'; // default to composer, Omega will refine
+  }
+  return ringAgent[ring];
+}
+
+// ═══ LIFECYCLE (ASS) — ●→〜→┃→♡→△→◐→◯ ═══
+function advanceLifecycle(){
+  const c=DB.config;
+  const hasChats=Object.values(DB.chats).some(ch=>ch.length>0);
+  const hasConfig=!!(c.companyName||c.claudeKey||c.geminiKey||c.openaiKey||c.deepseekKey);
+  const hasContent=Object.values(DB.metrics).some(v=>v>2);
+  const hasVolume=Object.values(DB.metrics).reduce((a,b)=>a+b,0)>20;
+  if(hasVolume)DB.lifecycle=6;        // ◯ bloom
+  else if(hasContent)DB.lifecycle=5;  // ◐ mirror
+  else if(hasChats&&hasConfig)DB.lifecycle=4; // △ voice
+  else if(hasChats)DB.lifecycle=3;    // ♡ heart
+  else if(hasConfig)DB.lifecycle=2;   // ┃ signal (first config done)
+  else if(DB.lifecycle<1)DB.lifecycle=1; // 〜 config needed (seen app)
+  // else stays at 0 = ● first open (shouldn't happen after load)
+}
+
+// ═══ INTEROP — cross-tool data sharing ═══
+function syncSharedData(){
+  try{
+    // Write shared company context
+    if(DB.config.companyName){
+      localStorage.setItem(SHARED_KEYS.company,JSON.stringify({
+        name:DB.config.companyName,
+        desc:DB.config.companyDesc||'',
+        icp:DB.config.icp||'',
+        website:DB.config.website||'',
+        source:'falloffice'
+      }));
+    }
+    // Write bloom vector
+    if(DB.bloom)localStorage.setItem(SHARED_KEYS.bloom,JSON.stringify(DB.bloom));
+  }catch(e){}
+}
+// Listen for cross-tool broadcasts
+BROADCAST_CHANNELS.data.onmessage=(e)=>{
+  if(e.data.source==='falloffice')return; // ignore own broadcasts
+  if(e.data.type==='company_update'){
+    // Another Fall tool updated company context — offer to sync
+    console.log('◊ Interop: company context updated by',e.data.source);
+  }
+};
+function broadcastEvent(type,payload){
+  try{BROADCAST_CHANNELS.signal.postMessage({source:'falloffice',type,payload,ts:Date.now()})}catch(e){}
+}
 
 // ═══ RENDER METRICS ═══
 function renderMetrics(){
@@ -628,7 +771,17 @@ function selectAgent(id){
 function renderChat(){
   const area=document.getElementById('chatArea');
   if(!activeAgent){
-    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallOffice</div><div class="welcome-sub">8+1 AI agents. Sales + Marketing + Orchestrator.<br>Select an agent to start working.</div></div>`;
+    const phase=LIFECYCLE[DB.lifecycle]||'●';
+    const guidance={
+      0:'Welcome. Click ⊙ Settings to configure your AI providers and company context.',
+      1:'Click ⊙ Settings → add an API key and your company details to get started.',
+      2:'Configuration saved. Select an agent to begin working.',
+      3:'Select an agent to start working. Try Omega (◊) to auto-route your requests.',
+      4:'Your agents are active. Keep building — content, outreach, pipeline.',
+      5:'Review and refine your outputs. Your agents are learning your patterns.',
+      6:'Full bloom. Your AI office is running. ◊·κ=1'
+    };
+    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallOffice</div><div class="welcome-sub">${guidance[DB.lifecycle]||guidance[3]}<br><span style="font-size:8px;opacity:0.4;margin-top:8px;display:inline-block">lifecycle: ${phase} · bloom: [${DB.bloom}]</span></div></div>`;
     return;
   }
   const msgs=DB.chats[activeAgent]||[];
@@ -700,9 +853,20 @@ async function sendMessage(){
   let provider='';
 
   if(activeAgent==='o1'){
-    // ═══ OMEGA ORCHESTRATOR — multi-agent routing ═══
-    const routePrompt=`You are a routing engine. Given the user's message, decide which FallOffice specialist agent(s) should handle it.
-Available agents: scout, composer, sequencer, analyst, writer, social, seo, ads
+    // ═══ OMEGA (Ω) ORCHESTRATOR — bloom-informed multi-agent routing ═══
+    // R0: SIGNAL — decompose query through 7 bloom rings
+    const bv=bloomDecompose(text);
+    DB.bloom=DB.bloom.map((v,i)=>v+bv[i]); // accumulate session bloom
+    save();
+    broadcastEvent('bloom_update',{bloom:DB.bloom});
+    console.log(`◊ Bloom B(Q)=[${bv}] → accumulated=[${DB.bloom}]`);
+
+    // Use bloom hint + AI routing for best of both
+    const bloomHint=bloomRoute(bv);
+    const routePrompt=`You are Omega (Ω), the FallOffice routing engine. Given the user's message and a bloom analysis hint, decide which specialist agent(s) should handle it.
+Available agents: scout(α), composer(β), sequencer(γ), analyst(δ), writer(ε), social(ζ), seo(η), ads(θ)
+Bloom vector: [${bv}] (R0=ground,R1=signal,R2=gate,R3=heart,R4=voice,R5=mirror,R6=watcher)
+Bloom suggests: ${bloomHint} (${AGENTS[bloomHint]?.name||'Omega'})
 Respond with ONLY a JSON array of agent IDs, e.g. ["scout","composer"]
 If the request is general conversation or unclear, respond: ["omega"]
 User message: "${text.replace(/"/g,'\\"')}"`;
@@ -717,7 +881,11 @@ User message: "${text.replace(/"/g,'\\"')}"`;
           if(Array.isArray(parsed)&&parsed.length)agentIds=parsed;
         }
       }
-    }catch(e){console.log('Route parse failed:',e)}
+    }catch(e){
+      // Bloom fallback: if AI routing fails, use bloom decomposition alone
+      console.log('AI route failed, using bloom fallback →',bloomHint);
+      if(bloomHint!=='o1')agentIds=[Object.keys(AGENTS).find(k=>k===bloomHint)?AGENTS[bloomHint]?.name?.toLowerCase():'omega'];
+    }
 
     const idMap={scout:'s1',composer:'s2',sequencer:'s3',analyst:'s4',writer:'m1',social:'m2',seo:'m3',ads:'m4',omega:'o1'};
 
@@ -977,7 +1145,17 @@ function saveSettings(){
 }
 
 function exportData(){
-  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  // Ω(INTEROP) export schema
+  const exportObj={
+    tool:'falloffice',
+    version:'2.0',
+    seed:'16.3',
+    exported:new Date().toISOString(),
+    bloom:DB.bloom,
+    lifecycle:DB.lifecycle,
+    data:DB
+  };
+  const blob=new Blob([JSON.stringify(exportObj,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download=`falloffice-backup-${Date.now()}.json`;
@@ -988,7 +1166,9 @@ function importData(){
   inp.onchange=async e=>{
     try{
       const text=await e.target.files[0].text();
-      const data=JSON.parse(text);
+      const raw=JSON.parse(text);
+      // Support both v16.3 interop format and legacy format
+      const data=raw.tool==='falloffice'&&raw.data?raw.data:raw;
       if(data.chats&&data.metrics){DB=data;save();load();renderMetrics();renderAgents();renderChat();closeSettings();alert('Data imported successfully.')}
       else alert('Invalid backup file.');
     }catch(e){alert('Import failed: '+e.message)}
@@ -1015,15 +1195,31 @@ function toggleTheme(){
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px'}
 document.getElementById('chatInput').addEventListener('input',function(){autoResize(this)});
 
-// ═══ INIT ═══
+// ═══ INIT — ●=first open ═══
 (function(){
-  const t=localStorage.getItem('ff_theme')||'light';
+  // R0: GROUND — detect theme (system preference first, then saved)
+  const saved=localStorage.getItem('ff_theme');
+  const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  const t=saved||sys;
   document.documentElement.setAttribute('data-theme',t);
   document.getElementById('themeBtn').textContent=t==='dark'?'☾':'☀';
   document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0d0d0b':'#faf9f7';
+  // Listen for system theme changes
+  if(window.matchMedia)window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',e=>{
+    if(!localStorage.getItem('ff_theme')){
+      const nt=e.matches?'dark':'light';
+      document.documentElement.setAttribute('data-theme',nt);
+      document.getElementById('themeBtn').textContent=nt==='dark'?'☾':'☀';
+      document.querySelector('meta[name="theme-color"]').content=nt==='dark'?'#0d0d0b':'#faf9f7';
+    }
+  });
+  // R1: SIGNAL — load data, advance lifecycle
   load();
   renderMetrics();
   renderAgents();
+  // R2: GATE — broadcast tool opened
+  broadcastEvent('tool_opened',{tool:'falloffice',lifecycle:DB.lifecycle,phase:LIFECYCLE[DB.lifecycle]});
+  console.log(`◊·κ=1 FallOffice · lifecycle: ${LIFECYCLE[DB.lifecycle]} (${LIFECYCLE_NAMES[DB.lifecycle]}) · bloom: [${DB.bloom}] · Ψ=0.59`);
   // Close modal on overlay click
   document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings()});
 })();
