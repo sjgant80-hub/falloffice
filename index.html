@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#faf9f7">
+<title>FallForce Agents · Sovereign AI Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS — FallForce Agents v2
+   ═══════════════════════════════════════════════════ */
+:root {
+  --bg: #faf9f7;
+  --bg2: #f0efec;
+  --surface: #ffffff;
+  --surface2: #f5f4f1;
+  --surface3: #eae9e5;
+  --ink: #111110;
+  --ink2: #2a2927;
+  --muted: #6b6760;
+  --dim: #9e9b97;
+  --border: #e0ddd8;
+  --border2: #ccc9c3;
+  --accent: #c8371a;
+  --accent-dark: #a62e15;
+  --accent-dim: rgba(200,55,26,0.07);
+  --accent-border: rgba(200,55,26,0.18);
+  --green: #166534;
+  --green-dim: rgba(22,101,52,0.07);
+  --blue: #1d4ed8;
+  --blue-dim: rgba(29,78,216,0.06);
+  --gold: #b08a3e;
+  --gold-dim: rgba(176,138,62,0.08);
+  --purple: #6d28d9;
+  --purple-dim: rgba(109,40,217,0.07);
+  --amber: #92400e;
+  --amber-dim: rgba(146,64,14,0.07);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+  --radius: 10px;
+  --radius-lg: 14px;
+  --transition: 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="dark"] {
+  --bg: #0d0d0b;
+  --bg2: #141412;
+  --surface: #1a1a17;
+  --surface2: #222220;
+  --surface3: #2a2a27;
+  --ink: #f0ede8;
+  --ink2: #d4d0c8;
+  --muted: #8a8680;
+  --dim: #5a5754;
+  --border: #2a2a27;
+  --border2: #343430;
+  --accent-dim: rgba(200,55,26,0.12);
+  --green-dim: rgba(22,101,52,0.12);
+  --blue-dim: rgba(29,78,216,0.12);
+  --gold-dim: rgba(176,138,62,0.12);
+  --purple-dim: rgba(109,40,217,0.12);
+  --amber-dim: rgba(146,64,14,0.12);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET + BASE
+   ═══════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:14px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;transition:background var(--transition),color var(--transition);line-height:1.55}
+
+/* ═══════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════ */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-0.5px;flex-shrink:0}
+.logo-text{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.5px}
+.logo-text em{color:var(--accent);font-style:normal}
+.logo-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:1.5px;margin-left:2px}
+.header-right{display:flex;align-items:center;gap:10px}
+.theme-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all var(--transition)}
+.theme-btn:hover{border-color:var(--ink);background:var(--surface3)}
+.settings-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--muted);transition:all var(--transition);display:flex;align-items:center;gap:5px}
+.settings-btn:hover{color:var(--ink);border-color:var(--ink)}
+
+/* ═══════════════════════════════════════════════════
+   METRICS BAR
+   ═══════════════════════════════════════════════════ */
+.metrics-bar{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--bg)}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;text-align:center;transition:all var(--transition);cursor:default}
+.metric:hover{box-shadow:var(--shadow-sm);border-color:var(--border2)}
+.metric-icon{font-size:16px;margin-bottom:4px}
+.metric-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.5px}
+.metric-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+.metric.blue .metric-val{color:var(--blue)}
+.metric.green .metric-val{color:var(--green)}
+.metric.accent .metric-val{color:var(--accent)}
+.metric.purple .metric-val{color:var(--purple)}
+.metric.amber .metric-val{color:var(--amber)}
+.metric.gold .metric-val{color:var(--gold)}
+
+/* ═══════════════════════════════════════════════════
+   SAVINGS BANNER
+   ═══════════════════════════════════════════════════ */
+.savings{margin:16px 24px 0;background:var(--ink);color:var(--bg);border-radius:var(--radius-lg);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.savings::before{content:'◊';position:absolute;right:20px;top:-20px;font-size:140px;opacity:0.04;font-family:'Syne',sans-serif}
+.savings-left{display:flex;align-items:center;gap:16px}
+.savings-amount{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px}
+.savings-sub{font-family:'DM Mono',monospace;font-size:11px;opacity:0.5}
+.savings-tag{font-family:'DM Mono',monospace;font-size:10px;background:var(--accent);color:#fff;padding:4px 10px;border-radius:20px;letter-spacing:0.5px}
+
+/* ═══════════════════════════════════════════════════
+   MAIN LAYOUT — AGENTS + WORKSPACE
+   ═══════════════════════════════════════════════════ */
+.main{display:grid;grid-template-columns:280px 1fr;gap:0;height:calc(100vh - 56px - 90px - 72px);min-height:400px}
+
+/* ═══════════════════════════════════════════════════
+   AGENT SIDEBAR
+   ═══════════════════════════════════════════════════ */
+.agents-panel{border-right:1px solid var(--border);overflow-y:auto;padding:16px;background:var(--bg);scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.agents-panel::-webkit-scrollbar{width:3px}
+.agents-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.team-label{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 4px 6px;margin-top:8px}
+.team-label:first-child{margin-top:0}
+.agent-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:6px;cursor:pointer;transition:all var(--transition);position:relative}
+.agent-card:hover{border-color:var(--accent-border);box-shadow:var(--shadow-sm)}
+.agent-card.active{border-color:var(--accent);background:var(--accent-dim);box-shadow:0 0 0 3px rgba(200,55,26,0.08)}
+.agent-card-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.agent-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.agent-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.3px}
+.agent-role{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.4}
+.agent-status{position:absolute;top:10px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--dim);transition:background 0.3s}
+.agent-card.active .agent-status{background:var(--green);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ═══════════════════════════════════════════════════
+   WORKSPACE — CHAT INTERFACE
+   ═══════════════════════════════════════════════════ */
+.workspace{display:flex;flex-direction:column;background:var(--bg2);overflow:hidden}
+.ws-header{padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ws-agent-info{display:flex;align-items:center;gap:12px}
+.ws-agent-icon{font-size:22px}
+.ws-agent-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.3px}
+.ws-agent-role{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.ws-actions{display:flex;gap:6px}
+.ws-btn{padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);transition:all var(--transition)}
+.ws-btn:hover{color:var(--ink);border-color:var(--ink)}
+
+.chat-area{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.chat-area::-webkit-scrollbar{width:3px}
+.chat-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+.msg{max-width:85%;animation:fadeUp 0.2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.user{align-self:flex-end}
+.msg.agent{align-self:flex-start}
+.msg-bubble{padding:14px 18px;border-radius:12px;font-size:13.5px;line-height:1.6;position:relative}
+.msg.user .msg-bubble{background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.msg.agent .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--ink)}
+.msg-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:0 4px;display:flex;align-items:center;gap:8px}
+.msg.user .msg-meta{justify-content:flex-end}
+.msg-copy{cursor:pointer;color:var(--dim);transition:color 0.15s}
+.msg-copy:hover{color:var(--accent)}
+
+.msg-bubble pre{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:8px 0;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+[data-theme="dark"] .msg.user .msg-bubble pre{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)}
+.msg-bubble strong{font-weight:700}
+.msg-bubble ul,.msg-bubble ol{padding-left:20px;margin:6px 0}
+.msg-bubble li{margin-bottom:4px}
+.msg-bubble h3,.msg-bubble h4{font-family:'Syne',sans-serif;margin:10px 0 4px;font-size:14px}
+.msg-bubble p{margin-bottom:6px}
+.msg-bubble p:last-child{margin-bottom:0}
+
+.welcome-msg{text-align:center;padding:40px 20px;color:var(--muted)}
+.welcome-icon{font-size:40px;margin-bottom:12px}
+.welcome-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.welcome-sub{font-family:'DM Mono',monospace;font-size:11px;max-width:400px;margin:0 auto;line-height:1.5}
+
+.chat-input-wrap{padding:16px 24px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end}
+.chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-family:system-ui,sans-serif;font-size:13.5px;color:var(--ink);outline:none;resize:none;min-height:44px;max-height:160px;line-height:1.5;transition:border-color var(--transition)}
+.chat-input::placeholder{color:var(--dim)}
+.chat-input:focus{border-color:var(--accent)}
+.send-btn{width:44px;height:44px;border-radius:var(--radius);border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all var(--transition);flex-shrink:0}
+.send-btn:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ═══════════════════════════════════════════════════
+   SETTINGS MODAL
+   ═══════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.modal-close{width:32px;height:32px;border-radius:8px;border:none;background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all var(--transition)}
+.modal-close:hover{background:var(--surface3);color:var(--ink)}
+.modal-body{padding:24px}
+.field{margin-bottom:18px}
+.field-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:6px;display:block}
+.field-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-family:system-ui,sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color var(--transition)}
+.field-input:focus{border-color:var(--accent)}
+.field-input::placeholder{color:var(--dim)}
+textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-hint{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-top:4px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px}
+.btn{padding:8px 18px;border-radius:8px;border:none;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--ink)}
+.btn-danger{background:transparent;color:var(--accent);border:1px solid var(--accent-border)}
+.btn-danger:hover{background:var(--accent-dim)}
+
+/* ═══════════════════════════════════════════════════
+   LOADING INDICATOR
+   ═══════════════════════════════════════════════════ */
+.typing{display:flex;gap:4px;padding:14px 18px}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--dim);animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:0.15s}
+.typing span:nth-child(3){animation-delay:0.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+
+/* ═══════════════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .metrics-bar{grid-template-columns:repeat(4,1fr);gap:6px;padding:12px 16px}
+  .main{grid-template-columns:1fr;height:auto}
+  .agents-panel{border-right:none;border-bottom:1px solid var(--border);max-height:none;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:12px}
+  .team-label{grid-column:1/-1;margin-top:4px}
+  .workspace{height:calc(100vh - 56px - 160px)}
+  .savings{margin:12px 16px 0}
+  .savings-amount{font-size:22px}
+  .header{padding:0 16px}
+}
+@media(max-width:600px){
+  .metrics-bar{grid-template-columns:repeat(2,1fr);gap:6px;padding:10px 12px}
+  .metric{padding:8px 10px}
+  .metric-val{font-size:16px}
+  .agents-panel{grid-template-columns:1fr;padding:10px}
+  .savings{flex-direction:column;text-align:center;gap:8px;padding:14px 18px}
+  .savings-left{flex-direction:column;gap:4px}
+  .chat-input-wrap{padding:12px}
+  .ws-header{padding:12px 16px}
+  .chat-area{padding:16px}
+  .modal{margin:10px;max-height:95vh}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">FF</div>
+    <div>
+      <div class="logo-text">Fall<em>Force</em> Agents</div>
+      <div class="logo-badge">SOVEREIGN AI OFFICE</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="settings-btn" onclick="openSettings()">⊙ Settings</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">☀</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     METRICS BAR
+     ═══════════════════════════════════════════════════ -->
+<div class="metrics-bar" id="metricsBar"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     SAVINGS BANNER
+     ═══════════════════════════════════════════════════ -->
+<div class="savings">
+  <div class="savings-left">
+    <div class="savings-amount">£213,600<span class="savings-sub">/year saved</span></div>
+    <div class="savings-sub">vs traditional sales + marketing team</div>
+  </div>
+  <div class="savings-tag">8 AI AGENTS · 2 TEAMS · 1 FILE</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN — AGENTS + WORKSPACE
+     ═══════════════════════════════════════════════════ -->
+<div class="main">
+  <div class="agents-panel" id="agentsPanel"></div>
+  <div class="workspace" id="workspace">
+    <div class="ws-header" id="wsHeader">
+      <div class="ws-agent-info">
+        <span class="ws-agent-icon" id="wsIcon">◊</span>
+        <div>
+          <div class="ws-agent-name" id="wsName">Select an agent</div>
+          <div class="ws-agent-role" id="wsRole">Click an agent card to begin</div>
+        </div>
+      </div>
+      <div class="ws-actions">
+        <button class="ws-btn" onclick="exportChat()" title="Export chat">↓ Export</button>
+        <button class="ws-btn" onclick="clearChat()" title="Clear history">✕ Clear</button>
+      </div>
+    </div>
+    <div class="chat-area" id="chatArea">
+      <div class="welcome-msg">
+        <div class="welcome-icon">◊</div>
+        <div class="welcome-title">FallForce Agents</div>
+        <div class="welcome-sub">8 specialist AI agents. Sales + Marketing.<br>Select an agent to start working.</div>
+      </div>
+    </div>
+    <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chatInput" placeholder="Type your message..." rows="1" onkeydown="handleKey(event)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">▸</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SETTINGS MODAL
+     ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Settings</div>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Gemini API Key</label>
+          <input class="field-input" id="cfgGeminiKey" type="password" placeholder="AIza...">
+          <div class="field-hint">Primary AI · free tier available</div>
+        </div>
+        <div class="field">
+          <label class="field-label">DeepSeek API Key</label>
+          <input class="field-input" id="cfgDeepseekKey" type="password" placeholder="sk-...">
+          <div class="field-hint">Fallback AI · optional</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Company Name</label>
+        <input class="field-input" id="cfgCompanyName" placeholder="Your company">
+      </div>
+      <div class="field">
+        <label class="field-label">Company Description</label>
+        <textarea class="field-input" id="cfgCompanyDesc" placeholder="What your company does (2-3 sentences)"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Ideal Customer Profile (ICP)</label>
+        <textarea class="field-input" id="cfgICP" placeholder="Industry, company size, job titles, pain points..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Brand Voice</label>
+        <textarea class="field-input" id="cfgVoice" placeholder="Tone, style, personality for outbound comms"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Website</label>
+        <input class="field-input" id="cfgWebsite" placeholder="https://yourcompany.com">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="resetAll()">Reset All Data</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="exportData()">↓ Export</button>
+        <button class="btn btn-ghost" onclick="importData()">↑ Import</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// ◊·κ=1 — FALLFORCE AGENTS v2
+// Sovereign AI Office · 8 Agents · Sales + Marketing
+// ═══════════════════════════════════════════════════
+
+const DB_KEY = 'fallforce_agents_v1';
+
+// ═══ AGENTS ═══
+const AGENTS = {
+  s1:{id:'s1',name:'Scout',icon:'🔍',team:'sales',role:'Prospect Research & ICP Scoring',
+    system:`You are Scout, an expert B2B sales researcher. You research companies and contacts for sales outreach. You score prospects against the ICP provided. You provide specific, actionable intelligence — not vague summaries.
+
+Always respond with structured intel:
+- Company overview (2-3 sentences)
+- Recent news / developments
+- Likely pain points (specific to their industry + size)
+- ICP fit score (0-100) with reasoning
+- 3 specific talking points
+- Recommended outreach approach
+
+Use web search when available to find real, current information. If no web search, use your training knowledge but flag that it may be outdated.`,
+    metric:'prospects'},
+  s2:{id:'s2',name:'Composer',icon:'✍️',team:'sales',role:'Personalised Outreach Messages',
+    system:`You are Composer, an expert B2B sales copywriter. You write personalised outreach messages for email and LinkedIn.
+
+RULES:
+- NEVER use templates with [FIRST NAME] style placeholders
+- Every message references something SPECIFIC about the prospect's business
+- Emails: under 150 words
+- LinkedIn: under 80 words
+- End with a soft CTA — a question, not a hard sell
+- Sound human, warm, and direct
+- No corporate jargon, no "I hope this finds you well"
+- Open with something that proves you've done your homework
+
+Generate 2-3 variants per request so the user can choose.`,
+    metric:'messages'},
+  s3:{id:'s3',name:'Sequencer',icon:'📅',team:'sales',role:'Follow-up Cadence & Scheduling',
+    system:`You are Sequencer, a sales follow-up strategist. You design multi-touch outreach sequences optimised for B2B sales.
+
+Each sequence:
+- 5-7 touches across email, LinkedIn, and social
+- Specific timing (Day 0, Day 2, Day 5, Day 8, Day 12, Day 17, Day 25)
+- Each touch has: channel, purpose, tone, and a draft message
+- Escalation logic: when to advance, when to pause, when to disqualify
+- Adapt cadence based on engagement signals (opened, clicked, replied, ghosted)
+
+Format as a clear timeline the user can follow step by step.`,
+    metric:'meetings'},
+  s4:{id:'s4',name:'Analyst',icon:'📊',team:'sales',role:'Pipeline Insights & Deal Scoring',
+    system:`You are Analyst, a sales intelligence expert. You analyse pipeline data, identify patterns, predict close probability, and recommend prioritisation.
+
+When given deal or pipeline information:
+- Score close probability (0-100%) with reasoning
+- Identify risk factors and buying signals
+- Recommend specific next actions
+- Compare against ICP fit
+- Flag deals that are stalling or need attention
+- Give specific, data-driven recommendations — not generic advice
+
+If given a full pipeline, rank deals by priority and explain the ranking.`,
+    metric:'pipeline'},
+  m1:{id:'m1',name:'Writer',icon:'📝',team:'marketing',role:'Blog Posts, Articles & Thought Leadership',
+    system:`You are Writer, an expert B2B content creator. You write blog posts, articles, case studies, and thought leadership content.
+
+RULES:
+- Clear, authoritative, SEO-aware writing
+- Match the brand voice provided in settings
+- Use headers, short paragraphs, and scannable structure
+- Include a compelling hook in the first 2 sentences
+- End with a clear CTA or takeaway
+- Default length: 800-1200 words unless specified
+- Always suggest 3 title options and a meta description
+
+For case studies: situation → challenge → solution → results → takeaway.`,
+    metric:'content'},
+  m2:{id:'m2',name:'Social',icon:'📱',team:'marketing',role:'Platform-Optimised Social Posts',
+    system:`You are Social, a B2B social media strategist. You create platform-optimised posts that drive engagement.
+
+Platform rules:
+- LinkedIn: hook in first line, line breaks for readability, 150-300 words, end with question or CTA, relevant hashtags (5-8)
+- Twitter/X: punchy, under 280 chars, thread format for longer content
+- Instagram: caption + hashtag strategy
+- Facebook: conversational, community-focused
+
+Generate 3-5 post variants per request. Suggest optimal posting times based on platform. Can create a week's content batch in one go.`,
+    metric:'social'},
+  m3:{id:'m3',name:'SEO',icon:'🎯',team:'marketing',role:'Keyword Strategy & Content Calendars',
+    system:`You are SEO, a search engine optimisation strategist. You build keyword strategies and content calendars.
+
+Capabilities:
+- Keyword research: seed keyword → cluster map with search intent
+- Content calendar: monthly plan organised by keyword clusters
+- On-page SEO: title tags, meta descriptions, header structure, internal linking
+- Technical suggestions: site structure, URL patterns, schema markup
+- Competitor gap analysis when given competitor URLs
+
+Format content calendars as structured tables with dates, topics, keywords, and intent.`,
+    metric:'content'},
+  m4:{id:'m4',name:'Ads',icon:'📣',team:'marketing',role:'Ad Copy for Google, Meta & LinkedIn',
+    system:`You are Ads, an expert paid media copywriter. You generate high-converting ad copy for multiple platforms.
+
+Platform specs:
+- Google Ads: headlines (30 chars), descriptions (90 chars), responsive search ads
+- Meta/Facebook: primary text, headline, description, multiple variants
+- LinkedIn: sponsored content, message ads, text ads
+
+For every brief, generate:
+- 3-5 headline variants
+- 2-3 description variants
+- Awareness + Consideration + Conversion versions
+- A/B test recommendations
+
+Know character limits cold. Never exceed them. Flag when a request can't fit the format.`,
+    metric:'adVariants'}
+};
+
+// ═══ METRICS ═══
+const METRICS = [
+  {id:'prospects',label:'Prospects',icon:'🔍',color:'blue'},
+  {id:'pipeline',label:'Pipeline £',icon:'⬡',color:'green'},
+  {id:'messages',label:'Messages',icon:'✉️',color:'accent'},
+  {id:'meetings',label:'Meetings',icon:'📅',color:'purple'},
+  {id:'content',label:'Content',icon:'📝',color:'amber'},
+  {id:'social',label:'Social Posts',icon:'📱',color:'blue'},
+  {id:'adVariants',label:'Ad Variants',icon:'📣',color:'gold'},
+  {id:'hotLeads',label:'Hot Leads',icon:'🔥',color:'accent'}
+];
+
+// ═══ STATE ═══
+let DB = {metrics:{},chats:{},config:{}};
+let activeAgent = null;
+let isGenerating = false;
+
+function load(){
+  try{const s=localStorage.getItem(DB_KEY);if(s)DB=JSON.parse(s)}catch(e){}
+  if(!DB.metrics)DB.metrics={};
+  if(!DB.chats)DB.chats={};
+  if(!DB.config)DB.config={};
+  METRICS.forEach(m=>{if(!DB.metrics[m.id])DB.metrics[m.id]=0});
+  Object.keys(AGENTS).forEach(k=>{if(!DB.chats[k])DB.chats[k]=[]});
+}
+function save(){localStorage.setItem(DB_KEY,JSON.stringify(DB))}
+
+// ═══ RENDER METRICS ═══
+function renderMetrics(){
+  const bar=document.getElementById('metricsBar');
+  bar.innerHTML=METRICS.map(m=>`
+    <div class="metric ${m.color}">
+      <div class="metric-icon">${m.icon}</div>
+      <div class="metric-val" id="mv-${m.id}">${DB.metrics[m.id]||0}</div>
+      <div class="metric-label">${m.label}</div>
+    </div>`).join('');
+}
+function bumpMetric(id){DB.metrics[id]=(DB.metrics[id]||0)+1;const el=document.getElementById('mv-'+id);if(el)el.textContent=DB.metrics[id];save()}
+
+// ═══ RENDER AGENTS ═══
+function renderAgents(){
+  const panel=document.getElementById('agentsPanel');
+  const sales=Object.values(AGENTS).filter(a=>a.team==='sales');
+  const marketing=Object.values(AGENTS).filter(a=>a.team==='marketing');
+  panel.innerHTML=`
+    <div class="team-label">Sales Team</div>
+    ${sales.map(a=>agentCardHTML(a)).join('')}
+    <div class="team-label">Marketing Team</div>
+    ${marketing.map(a=>agentCardHTML(a)).join('')}
+  `;
+}
+function agentCardHTML(a){
+  return`<div class="agent-card${activeAgent===a.id?' active':''}" onclick="selectAgent('${a.id}')" id="card-${a.id}">
+    <div class="agent-status"></div>
+    <div class="agent-card-top"><span class="agent-icon">${a.icon}</span><span class="agent-name">${a.name}</span></div>
+    <div class="agent-role">${a.role}</div>
+  </div>`;
+}
+
+// ═══ SELECT AGENT ═══
+function selectAgent(id){
+  activeAgent=id;
+  const a=AGENTS[id];
+  document.getElementById('wsIcon').textContent=a.icon;
+  document.getElementById('wsName').textContent=a.name;
+  document.getElementById('wsRole').textContent=a.role;
+  renderAgents();
+  renderChat();
+  document.getElementById('chatInput').focus();
+}
+
+// ═══ RENDER CHAT ═══
+function renderChat(){
+  const area=document.getElementById('chatArea');
+  if(!activeAgent){
+    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallForce Agents</div><div class="welcome-sub">8 specialist AI agents. Sales + Marketing.<br>Select an agent to start working.</div></div>`;
+    return;
+  }
+  const msgs=DB.chats[activeAgent]||[];
+  if(!msgs.length){
+    const a=AGENTS[activeAgent];
+    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">${a.icon}</div><div class="welcome-title">${a.name}</div><div class="welcome-sub">${a.role}<br><br>Ready to work. Type a message to begin.</div></div>`;
+    return;
+  }
+  area.innerHTML=msgs.map((m,i)=>`
+    <div class="msg ${m.role}">
+      <div class="msg-bubble">${m.role==='agent'?formatMd(m.content):esc(m.content)}</div>
+      <div class="msg-meta">
+        <span>${m.ts||''}</span>
+        ${m.role==='agent'?`<span class="msg-copy" onclick="copyMsg(${i})" title="Copy">◫ Copy</span>`:''}
+        ${m.provider?`<span style="opacity:0.5">${m.provider}</span>`:''}
+      </div>
+    </div>`).join('');
+  area.scrollTop=area.scrollHeight;
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function formatMd(s){
+  let h=esc(s);
+  h=h.replace(/```([\s\S]*?)```/g,'<pre>$1</pre>');
+  h=h.replace(/`([^`]+)`/g,'<code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-family:\'DM Mono\',monospace;font-size:12px">$1</code>');
+  h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/^### (.+)$/gm,'<h4>$1</h4>');
+  h=h.replace(/^## (.+)$/gm,'<h3>$1</h3>');
+  h=h.replace(/^[-•] (.+)$/gm,'<li>$1</li>');
+  h=h.replace(/(<li>.*<\/li>)/s,m=>'<ul>'+m+'</ul>');
+  h=h.replace(/\n{2,}/g,'</p><p>');
+  if(!h.startsWith('<'))h='<p>'+h+'</p>';
+  return h;
+}
+function copyMsg(i){
+  const msgs=DB.chats[activeAgent]||[];
+  if(msgs[i])navigator.clipboard.writeText(msgs[i].content);
+}
+
+// ═══ SEND MESSAGE ═══
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}
+
+async function sendMessage(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text||!activeAgent||isGenerating)return;
+
+  const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  DB.chats[activeAgent].push({role:'user',content:text,ts});
+  save(); renderChat();
+  input.value=''; autoResize(input);
+
+  isGenerating=true;
+  document.getElementById('sendBtn').disabled=true;
+
+  // Show typing indicator
+  const area=document.getElementById('chatArea');
+  const typing=document.createElement('div');
+  typing.className='msg agent';
+  typing.innerHTML='<div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  area.appendChild(typing);
+  area.scrollTop=area.scrollHeight;
+
+  // Build messages
+  const agent=AGENTS[activeAgent];
+  const ctx=buildContext(agent);
+  const history=DB.chats[activeAgent].slice(-20);
+
+  let response='';
+  let provider='';
+
+  // Cascade: Gemini → DeepSeek → Fallback
+  if(DB.config.geminiKey){
+    try{
+      const r=await callGemini(ctx,history,DB.config.geminiKey);
+      response=r; provider='Gemini';
+    }catch(e){console.log('Gemini failed:',e)}
+  }
+  if(!response&&DB.config.deepseekKey){
+    try{
+      const r=await callDeepSeek(ctx,history,DB.config.deepseekKey);
+      response=r; provider='DeepSeek';
+    }catch(e){console.log('DeepSeek failed:',e)}
+  }
+  if(!response){
+    response=echoFallback(agent,text);
+    provider='Echo (offline)';
+  }
+
+  typing.remove();
+  DB.chats[activeAgent].push({role:'agent',content:response,ts:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),provider});
+  if(agent.metric)bumpMetric(agent.metric);
+  save(); renderChat();
+
+  isGenerating=false;
+  document.getElementById('sendBtn').disabled=false;
+}
+
+function buildContext(agent){
+  const c=DB.config;
+  let ctx=agent.system+'\n\n';
+  if(c.companyName)ctx+=`COMPANY: ${c.companyName}\n`;
+  if(c.companyDesc)ctx+=`ABOUT: ${c.companyDesc}\n`;
+  if(c.icp)ctx+=`ICP: ${c.icp}\n`;
+  if(c.voice)ctx+=`BRAND VOICE: ${c.voice}\n`;
+  if(c.website)ctx+=`WEBSITE: ${c.website}\n`;
+  return ctx;
+}
+
+// ═══ AI PROVIDERS ═══
+async function callGemini(systemPrompt,history,key){
+  const contents=[];
+  contents.push({role:'user',parts:[{text:systemPrompt}]});
+  contents.push({role:'model',parts:[{text:'Understood. I am ready to work in my specialist role with the context provided.'}]});
+  for(const m of history){
+    contents.push({role:m.role==='user'?'user':'model',parts:[{text:m.content}]});
+  }
+  const resp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents,generationConfig:{maxOutputTokens:4096,temperature:0.7}})
+  });
+  if(!resp.ok)throw new Error(`Gemini ${resp.status}`);
+  const data=await resp.json();
+  if(data.candidates&&data.candidates[0]&&data.candidates[0].content)
+    return data.candidates[0].content.parts.map(p=>p.text).join('');
+  throw new Error('No candidates');
+}
+
+async function callDeepSeek(systemPrompt,history,key){
+  const messages=[{role:'system',content:systemPrompt}];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const resp=await fetch('https://api.deepseek.com/v1/chat/completions',{
+    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+    body:JSON.stringify({model:'deepseek-chat',messages,max_tokens:4096,temperature:0.7})
+  });
+  if(!resp.ok)throw new Error(`DeepSeek ${resp.status}`);
+  const data=await resp.json();
+  return data.choices[0].message.content;
+}
+
+function echoFallback(agent,userMsg){
+  return`**${agent.name} — Offline Mode**
+
+I'm running in offline fallback mode (no API keys configured). Here's what I would do with your request:
+
+**Your input:** "${userMsg.slice(0,100)}${userMsg.length>100?'...':''}"
+
+**My role:** ${agent.role}
+
+To get full AI responses:
+1. Open Settings (⊙ button in header)
+2. Add a Gemini API key (free at ai.google.dev)
+3. Or add a DeepSeek API key (api.deepseek.com)
+
+The cascade will try Gemini first, then DeepSeek, then this offline mode.
+
+*Even without an API key, you can use me as a structured thinking partner — describe what you need and I'll outline the approach.*`;
+}
+
+// ═══ CHAT UTILITIES ═══
+function exportChat(){
+  if(!activeAgent)return;
+  const msgs=DB.chats[activeAgent]||[];
+  if(!msgs.length)return;
+  const agent=AGENTS[activeAgent];
+  const lines=msgs.map(m=>`[${m.ts||''}] ${m.role==='user'?'You':agent.name}: ${m.content}`).join('\n\n---\n\n');
+  const blob=new Blob([`# ${agent.name} — Chat Export\n# ${new Date().toISOString()}\n\n${lines}`],{type:'text/markdown'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`fallforce-${agent.id}-${Date.now()}.md`;
+  a.click();
+}
+function clearChat(){
+  if(!activeAgent)return;
+  if(!confirm(`Clear ${AGENTS[activeAgent].name} chat history?`))return;
+  DB.chats[activeAgent]=[];
+  save(); renderChat();
+}
+
+// ═══ SETTINGS ═══
+function openSettings(){
+  const c=DB.config;
+  document.getElementById('cfgGeminiKey').value=c.geminiKey||'';
+  document.getElementById('cfgDeepseekKey').value=c.deepseekKey||'';
+  document.getElementById('cfgCompanyName').value=c.companyName||'';
+  document.getElementById('cfgCompanyDesc').value=c.companyDesc||'';
+  document.getElementById('cfgICP').value=c.icp||'';
+  document.getElementById('cfgVoice').value=c.voice||'';
+  document.getElementById('cfgWebsite').value=c.website||'';
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('open')}
+function saveSettings(){
+  DB.config.geminiKey=document.getElementById('cfgGeminiKey').value.trim();
+  DB.config.deepseekKey=document.getElementById('cfgDeepseekKey').value.trim();
+  DB.config.companyName=document.getElementById('cfgCompanyName').value.trim();
+  DB.config.companyDesc=document.getElementById('cfgCompanyDesc').value.trim();
+  DB.config.icp=document.getElementById('cfgICP').value.trim();
+  DB.config.voice=document.getElementById('cfgVoice').value.trim();
+  DB.config.website=document.getElementById('cfgWebsite').value.trim();
+  save(); closeSettings();
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`fallforce-agents-backup-${Date.now()}.json`;
+  a.click();
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=async e=>{
+    try{
+      const text=await e.target.files[0].text();
+      const data=JSON.parse(text);
+      if(data.chats&&data.metrics){DB=data;save();load();renderMetrics();renderAgents();renderChat();closeSettings();alert('Data imported successfully.')}
+      else alert('Invalid backup file.');
+    }catch(e){alert('Import failed: '+e.message)}
+  };
+  inp.click();
+}
+function resetAll(){
+  if(!confirm('This will delete ALL data — chats, metrics, settings. Are you sure?'))return;
+  if(!confirm('Really? This cannot be undone.'))return;
+  localStorage.removeItem(DB_KEY);
+  location.reload();
+}
+
+// ═══ THEME ═══
+function toggleTheme(){
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').textContent=t==='dark'?'☾':'☀';
+  document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0d0d0b':'#faf9f7';
+  localStorage.setItem('ff_theme',t);
+}
+
+// ═══ AUTO-RESIZE TEXTAREA ═══
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px'}
+document.getElementById('chatInput').addEventListener('input',function(){autoResize(this)});
+
+// ═══ INIT ═══
+(function(){
+  const t=localStorage.getItem('ff_theme')||'light';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').textContent=t==='dark'?'☾':'☀';
+  document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0d0d0b':'#faf9f7';
+  load();
+  renderMetrics();
+  renderAgents();
+  // Close modal on overlay click
+  document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings()});
+})();
+</script>
+</body>
+</html>
