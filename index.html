@@ -130,6 +130,9 @@ body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'
 .team-label{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 4px 6px;margin-top:8px}
 .team-label:first-child{margin-top:0}
 .agent-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:6px;cursor:pointer;transition:all var(--transition);position:relative}
+.agent-card.orchestrator{border-color:var(--accent-border);background:linear-gradient(135deg,var(--surface),var(--accent-dim));border-width:2px}
+.agent-card.orchestrator .agent-icon{font-size:20px}
+.agent-card.orchestrator .agent-name{color:var(--accent)}
 .agent-card:hover{border-color:var(--accent-border);box-shadow:var(--shadow-sm)}
 .agent-card.active{border-color:var(--accent);background:var(--accent-dim);box-shadow:0 0 0 3px rgba(200,55,26,0.08)}
 .agent-card-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
@@ -236,6 +239,7 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
   .main{grid-template-columns:1fr;height:auto}
   .agents-panel{border-right:none;border-bottom:1px solid var(--border);max-height:none;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:12px}
   .team-label{grid-column:1/-1;margin-top:4px}
+  .agent-card.orchestrator{grid-column:1/-1}
   .workspace{height:calc(100vh - 56px - 160px)}
   .savings{margin:12px 16px 0}
   .savings-amount{font-size:22px}
@@ -287,7 +291,7 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
     <div class="savings-amount">£213,600<span class="savings-sub">/year saved</span></div>
     <div class="savings-sub">vs traditional sales + marketing team</div>
   </div>
-  <div class="savings-tag">8 AI AGENTS · 2 TEAMS · 1 FILE</div>
+  <div class="savings-tag">8+1 AI AGENTS · 2 TEAMS · 1 ORCHESTRATOR · 1 FILE</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -313,7 +317,7 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
       <div class="welcome-msg">
         <div class="welcome-icon">◊</div>
         <div class="welcome-title">FallOffice</div>
-        <div class="welcome-sub">8 specialist AI agents. Sales + Marketing.<br>Select an agent to start working.</div>
+        <div class="welcome-sub">8+1 AI agents. Sales + Marketing + Orchestrator.<br>Select an agent to start working.</div>
       </div>
     </div>
     <div class="chat-input-wrap">
@@ -402,14 +406,42 @@ textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
 
 <script>
 // ═══════════════════════════════════════════════════
-// ◊·κ=1 — FALLFORCE AGENTS v2
-// Sovereign AI Office · 8 Agents · Sales + Marketing
+// ◊·κ=1 — FALLOFFICE v2
+// Sovereign AI Office · 8+1 Agents · Sales + Marketing + Orchestrator
 // ═══════════════════════════════════════════════════
 
 const DB_KEY = 'falloffice_v1';
 
 // ═══ AGENTS ═══
 const AGENTS = {
+  o1:{id:'o1',name:'Omega',icon:'◊',team:'orchestrator',role:'Orchestrator · Routes to all 8 agents',
+    system:`You are Omega, the FallOffice orchestrator. You have 8 specialist agents at your disposal:
+
+SALES TEAM:
+- Scout: prospect research, ICP scoring, company intel
+- Composer: personalised cold emails and LinkedIn messages
+- Sequencer: multi-touch follow-up cadences and scheduling
+- Analyst: pipeline insights, deal scoring, close probability
+
+MARKETING TEAM:
+- Writer: blog posts, articles, case studies, thought leadership (800-1200 words)
+- Social: platform-optimised posts for LinkedIn, Twitter/X, Instagram, Facebook
+- SEO: keyword strategy, content calendars, on-page optimisation
+- Ads: ad copy for Google, Meta, LinkedIn with character limits
+
+YOUR JOB:
+1. Analyse the user's request
+2. Decide which agent(s) should handle it
+3. If the request spans multiple agents, break it down and handle each part with the right specialist's expertise
+4. Synthesise everything into one cohesive response
+5. Label which agent contributed each section using [Scout], [Composer], etc.
+
+For simple requests that clearly belong to one agent, respond as that agent would.
+For complex requests, chain multiple agents and merge their outputs.
+For ambiguous requests, ask a clarifying question.
+
+You are the command centre. You see the full picture. You coordinate.`,
+    metric:null},
   s1:{id:'s1',name:'Scout',icon:'🔍',team:'sales',role:'Prospect Research & ICP Scoring',
     system:`You are Scout, an expert B2B sales researcher. You research companies and contacts for sales outreach. You score prospects against the ICP provided. You provide specific, actionable intelligence — not vague summaries.
 
@@ -560,9 +592,11 @@ function bumpMetric(id){DB.metrics[id]=(DB.metrics[id]||0)+1;const el=document.g
 // ═══ RENDER AGENTS ═══
 function renderAgents(){
   const panel=document.getElementById('agentsPanel');
+  const orch=Object.values(AGENTS).filter(a=>a.team==='orchestrator');
   const sales=Object.values(AGENTS).filter(a=>a.team==='sales');
   const marketing=Object.values(AGENTS).filter(a=>a.team==='marketing');
   panel.innerHTML=`
+    ${orch.map(a=>agentCardHTML(a)).join('')}
     <div class="team-label">Sales Team</div>
     ${sales.map(a=>agentCardHTML(a)).join('')}
     <div class="team-label">Marketing Team</div>
@@ -570,7 +604,8 @@ function renderAgents(){
   `;
 }
 function agentCardHTML(a){
-  return`<div class="agent-card${activeAgent===a.id?' active':''}" onclick="selectAgent('${a.id}')" id="card-${a.id}">
+  const cls=a.team==='orchestrator'?' orchestrator':'';
+  return`<div class="agent-card${activeAgent===a.id?' active':''}${cls}" onclick="selectAgent('${a.id}')" id="card-${a.id}">
     <div class="agent-status"></div>
     <div class="agent-card-top"><span class="agent-icon">${a.icon}</span><span class="agent-name">${a.name}</span></div>
     <div class="agent-role">${a.role}</div>
@@ -593,7 +628,7 @@ function selectAgent(id){
 function renderChat(){
   const area=document.getElementById('chatArea');
   if(!activeAgent){
-    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallOffice</div><div class="welcome-sub">8 specialist AI agents. Sales + Marketing.<br>Select an agent to start working.</div></div>`;
+    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallOffice</div><div class="welcome-sub">8+1 AI agents. Sales + Marketing + Orchestrator.<br>Select an agent to start working.</div></div>`;
     return;
   }
   const msgs=DB.chats[activeAgent]||[];
@@ -659,30 +694,74 @@ async function sendMessage(){
 
   // Build messages
   const agent=AGENTS[activeAgent];
-  const ctx=buildContext(agent);
   const history=DB.chats[activeAgent].slice(-20);
 
   let response='';
   let provider='';
 
-  // Cascade: Claude → ChatGPT → Gemini → DeepSeek → WebLLM → Echo
-  const cascade=[
-    {key:'claudeKey', fn:callClaude, name:'Claude'},
-    {key:'openaiKey', fn:callOpenAI, name:'ChatGPT'},
-    {key:'geminiKey', fn:callGemini, name:'Gemini'},
-    {key:'deepseekKey', fn:callDeepSeek, name:'DeepSeek'},
-  ];
-  for(const p of cascade){
-    if(!response&&DB.config[p.key]){
-      try{response=await p.fn(ctx,history,DB.config[p.key]);provider=p.name}
-      catch(e){console.log(`${p.name} failed:`,e)}
+  if(activeAgent==='o1'){
+    // ═══ OMEGA ORCHESTRATOR — multi-agent routing ═══
+    const routePrompt=`You are a routing engine. Given the user's message, decide which FallOffice specialist agent(s) should handle it.
+Available agents: scout, composer, sequencer, analyst, writer, social, seo, ads
+Respond with ONLY a JSON array of agent IDs, e.g. ["scout","composer"]
+If the request is general conversation or unclear, respond: ["omega"]
+User message: "${text.replace(/"/g,'\\"')}"`;
+
+    let agentIds=['omega'];
+    try{
+      const routeResp=await cascadeCall(routePrompt,[{role:'user',content:text}]);
+      if(routeResp){
+        const match=routeResp.match(/\[[\s\S]*?\]/);
+        if(match){
+          const parsed=JSON.parse(match[0]);
+          if(Array.isArray(parsed)&&parsed.length)agentIds=parsed;
+        }
+      }
+    }catch(e){console.log('Route parse failed:',e)}
+
+    const idMap={scout:'s1',composer:'s2',sequencer:'s3',analyst:'s4',writer:'m1',social:'m2',seo:'m3',ads:'m4',omega:'o1'};
+
+    if(agentIds.includes('omega')||agentIds.length===0){
+      // General query — Omega handles directly
+      const ctx=buildContext(agent);
+      const r=await cascadeCall(ctx,history);
+      response=r||echoFallback(agent,text);
+      provider=lastProvider;
+    }else{
+      // Route to specialists and merge
+      const parts=[];
+      for(const name of agentIds){
+        const sid=idMap[name];
+        if(!sid||!AGENTS[sid])continue;
+        const spec=AGENTS[sid];
+        const specCtx=buildContext(spec);
+        try{
+          const r=await cascadeCall(specCtx,[{role:'user',content:text}]);
+          if(r)parts.push({name:spec.name,icon:spec.icon,content:r});
+          if(spec.metric)bumpMetric(spec.metric);
+        }catch(e){console.log(`${spec.name} failed in orchestrator:`,e)}
+      }
+      if(parts.length===1){
+        response=`**${parts[0].icon} ${parts[0].name}**\n\n${parts[0].content}`;
+      }else if(parts.length>1){
+        response=parts.map(p=>`---\n### ${p.icon} ${p.name}\n\n${p.content}`).join('\n\n');
+        // Ask for synthesis if we have multiple outputs
+        const synthPrompt=`You are Omega, the FallOffice orchestrator. You just received outputs from multiple specialist agents. Synthesise them into one cohesive response. Add a brief intro, keep each agent's section clearly labelled, and end with a recommended next step.\n\nAgent outputs:\n${response}`;
+        try{
+          const synth=await cascadeCall(synthPrompt,[{role:'user',content:text}]);
+          if(synth)response=synth;
+        }catch(e){/* use raw merged output */}
+      }else{
+        response=echoFallback(agent,text);
+      }
+      provider=lastProvider||'Echo (offline)';
     }
+  }else{
+    // ═══ SINGLE AGENT — direct cascade ═══
+    const ctx=buildContext(agent);
+    response=await cascadeCall(ctx,history)||echoFallback(agent,text);
+    provider=lastProvider||'Echo (offline)';
   }
-  if(!response&&webllmEngine){
-    try{response=await callWebLLM(ctx,history);provider='WebLLM'}
-    catch(e){console.log('WebLLM failed:',e)}
-  }
-  if(!response){response=echoFallback(agent,text);provider='Echo (offline)'}
 
   typing.remove();
   DB.chats[activeAgent].push({role:'agent',content:response,ts:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),provider});
@@ -702,6 +781,29 @@ function buildContext(agent){
   if(c.voice)ctx+=`BRAND VOICE: ${c.voice}\n`;
   if(c.website)ctx+=`WEBSITE: ${c.website}\n`;
   return ctx;
+}
+
+// ═══ CASCADE HELPER ═══
+let lastProvider='';
+async function cascadeCall(systemPrompt,history){
+  const cascade=[
+    {key:'claudeKey', fn:callClaude, name:'Claude'},
+    {key:'openaiKey', fn:callOpenAI, name:'ChatGPT'},
+    {key:'geminiKey', fn:callGemini, name:'Gemini'},
+    {key:'deepseekKey', fn:callDeepSeek, name:'DeepSeek'},
+  ];
+  for(const p of cascade){
+    if(DB.config[p.key]){
+      try{const r=await p.fn(systemPrompt,history,DB.config[p.key]);if(r){lastProvider=p.name;return r}}
+      catch(e){console.log(`${p.name} failed:`,e)}
+    }
+  }
+  if(webllmEngine){
+    try{const r=await callWebLLM(systemPrompt,history);if(r){lastProvider='WebLLM';return r}}
+    catch(e){console.log('WebLLM failed:',e)}
+  }
+  lastProvider='Echo (offline)';
+  return null;
 }
 
 // ═══ AI PROVIDERS — API-AGNOSTIC CASCADE ═══
