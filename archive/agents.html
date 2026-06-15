@@ -1,0 +1,2916 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#faf9f7">
+<title>FallOffice · Sovereign AI Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS — FallOffice v2
+   ═══════════════════════════════════════════════════ */
+:root {
+  --bg: #faf9f7;
+  --bg2: #f0efec;
+  --surface: #ffffff;
+  --surface2: #f5f4f1;
+  --surface3: #eae9e5;
+  --ink: #111110;
+  --ink2: #2a2927;
+  --muted: #6b6760;
+  --dim: #9e9b97;
+  --border: #e0ddd8;
+  --border2: #ccc9c3;
+  --accent: #c8371a;
+  --accent-dark: #a62e15;
+  --accent-dim: rgba(200,55,26,0.07);
+  --accent-border: rgba(200,55,26,0.18);
+  --green: #166534;
+  --green-dim: rgba(22,101,52,0.07);
+  --blue: #1d4ed8;
+  --blue-dim: rgba(29,78,216,0.06);
+  --gold: #b08a3e;
+  --gold-dim: rgba(176,138,62,0.08);
+  --purple: #6d28d9;
+  --purple-dim: rgba(109,40,217,0.07);
+  --amber: #92400e;
+  --amber-dim: rgba(146,64,14,0.07);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+  --radius: 10px;
+  --radius-lg: 14px;
+  --transition: 0.18s cubic-bezier(0.4,0,0.2,1);
+  /* ◊·κ=1 — Bloom Ring Colours (R0-R6 · primes 2,3,5,7,11,13,17) */
+  --r0: #660044; /* ground · 2 */
+  --r1: #00AAFF; /* signal · 3 */
+  --r2: #FFAA00; /* gate · 5 */
+  --r3: #FF4444; /* heart · 7 */
+  --r4: #44AA44; /* voice · 11 */
+  --r5: #AA44FF; /* mirror · 13 */
+  --r6: #FFFFFF; /* watcher · 17 */
+  --phi: 1.618;
+  --kappa: 0.618;
+}
+[data-theme="dark"] {
+  --bg: #0d0d0b;
+  --bg2: #141412;
+  --surface: #1a1a17;
+  --surface2: #222220;
+  --surface3: #2a2a27;
+  --ink: #f0ede8;
+  --ink2: #d4d0c8;
+  --muted: #8a8680;
+  --dim: #5a5754;
+  --border: #2a2a27;
+  --border2: #343430;
+  --accent-dim: rgba(200,55,26,0.12);
+  --green-dim: rgba(22,101,52,0.12);
+  --blue-dim: rgba(29,78,216,0.12);
+  --gold-dim: rgba(176,138,62,0.12);
+  --purple-dim: rgba(109,40,217,0.12);
+  --amber-dim: rgba(146,64,14,0.12);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET + BASE
+   ═══════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:14px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh;transition:background var(--transition),color var(--transition);line-height:1.55}
+
+/* ═══════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════ */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo-mark{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-0.5px;flex-shrink:0}
+.logo-text{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:-0.5px}
+.logo-text em{color:var(--accent);font-style:normal}
+.logo-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:1.5px;margin-left:2px}
+.header-right{display:flex;align-items:center;gap:10px}
+.theme-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all var(--transition)}
+.theme-btn:hover{border-color:var(--ink);background:var(--surface3)}
+.settings-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--muted);transition:all var(--transition);display:flex;align-items:center;gap:5px}
+.settings-btn:hover{color:var(--ink);border-color:var(--ink)}
+
+/* ═══════════════════════════════════════════════════
+   METRICS BAR
+   ═══════════════════════════════════════════════════ */
+.metrics-bar{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--bg)}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;text-align:center;transition:all var(--transition);cursor:default}
+.metric:hover{box-shadow:var(--shadow-sm);border-color:var(--border2)}
+.metric-icon{font-size:16px;margin-bottom:4px}
+.metric-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.5px}
+.metric-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-top:2px}
+.metric.blue .metric-val{color:var(--blue)}
+.metric.green .metric-val{color:var(--green)}
+.metric.accent .metric-val{color:var(--accent)}
+.metric.purple .metric-val{color:var(--purple)}
+.metric.amber .metric-val{color:var(--amber)}
+.metric.gold .metric-val{color:var(--gold)}
+
+/* ═══════════════════════════════════════════════════
+   SAVINGS BANNER
+   ═══════════════════════════════════════════════════ */
+.savings{margin:16px 24px 0;background:var(--ink);color:var(--bg);border-radius:var(--radius-lg);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.savings::before{content:'◊';position:absolute;right:20px;top:-20px;font-size:140px;opacity:0.04;font-family:'Syne',sans-serif}
+.savings-left{display:flex;align-items:center;gap:16px}
+.savings-amount{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px}
+.savings-sub{font-family:'DM Mono',monospace;font-size:11px;opacity:0.5}
+.savings-tag{font-family:'DM Mono',monospace;font-size:10px;background:var(--accent);color:#fff;padding:4px 10px;border-radius:20px;letter-spacing:0.5px}
+
+/* ═══════════════════════════════════════════════════
+   MAIN LAYOUT — AGENTS + WORKSPACE
+   ═══════════════════════════════════════════════════ */
+.main{display:grid;grid-template-columns:280px 1fr;gap:0;height:calc(100vh - 56px - 90px - 72px);min-height:400px}
+
+/* ═══════════════════════════════════════════════════
+   AGENT SIDEBAR
+   ═══════════════════════════════════════════════════ */
+.agents-panel{border-right:1px solid var(--border);overflow-y:auto;padding:16px;background:var(--bg);scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.agents-panel::-webkit-scrollbar{width:3px}
+.agents-panel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.team-label{font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 4px 6px;margin-top:8px}
+.team-label:first-child{margin-top:0}
+.agent-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:6px;cursor:pointer;transition:all var(--transition);position:relative}
+.agent-card.orchestrator{border-color:var(--accent-border);background:linear-gradient(135deg,var(--surface),var(--accent-dim));border-width:2px}
+.agent-card.orchestrator .agent-icon{font-size:20px}
+.agent-card.orchestrator .agent-name{color:var(--accent)}
+.agent-card:hover{border-color:var(--accent-border);box-shadow:var(--shadow-sm)}
+.agent-card.active{border-color:var(--accent);background:var(--accent-dim);box-shadow:0 0 0 3px rgba(200,55,26,0.08)}
+.agent-card-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.agent-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.agent-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:-0.3px}
+.agent-role{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.4}
+.agent-status{position:absolute;top:10px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--dim);transition:background 0.3s}
+.agent-card.active .agent-status{background:var(--green);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ═══════════════════════════════════════════════════
+   WORKSPACE — CHAT INTERFACE
+   ═══════════════════════════════════════════════════ */
+.workspace{display:flex;flex-direction:column;background:var(--bg2);overflow:hidden}
+.ws-header{padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ws-agent-info{display:flex;align-items:center;gap:12px}
+.ws-agent-icon{font-size:22px}
+.ws-agent-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.3px}
+.ws-agent-role{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.ws-actions{display:flex;gap:6px}
+.ws-btn{padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);transition:all var(--transition)}
+.ws-btn:hover{color:var(--ink);border-color:var(--ink)}
+
+.chat-area{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.chat-area::-webkit-scrollbar{width:3px}
+.chat-area::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+.msg{max-width:85%;animation:fadeUp 0.2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.user{align-self:flex-end}
+.msg.agent{align-self:flex-start}
+.msg-bubble{padding:14px 18px;border-radius:12px;font-size:13.5px;line-height:1.6;position:relative}
+.msg.user .msg-bubble{background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.msg.agent .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--ink)}
+.msg-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-top:4px;padding:0 4px;display:flex;align-items:center;gap:8px}
+.msg.user .msg-meta{justify-content:flex-end}
+.msg-copy{cursor:pointer;color:var(--dim);transition:color 0.15s}
+.msg-copy:hover{color:var(--accent)}
+
+.msg-bubble pre{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin:8px 0;overflow-x:auto;font-family:'DM Mono',monospace;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+[data-theme="dark"] .msg.user .msg-bubble pre{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)}
+.msg-bubble strong{font-weight:700}
+.msg-bubble ul,.msg-bubble ol{padding-left:20px;margin:6px 0}
+.msg-bubble li{margin-bottom:4px}
+.msg-bubble h3,.msg-bubble h4{font-family:'Syne',sans-serif;margin:10px 0 4px;font-size:14px}
+.msg-bubble p{margin-bottom:6px}
+.msg-bubble p:last-child{margin-bottom:0}
+
+.welcome-msg{text-align:center;padding:40px 20px;color:var(--muted)}
+.welcome-icon{font-size:40px;margin-bottom:12px}
+.welcome-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.welcome-sub{font-family:'DM Mono',monospace;font-size:11px;max-width:400px;margin:0 auto;line-height:1.5}
+
+.chat-input-wrap{padding:16px 24px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:10px;align-items:flex-end}
+.chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-family:system-ui,sans-serif;font-size:13.5px;color:var(--ink);outline:none;resize:none;min-height:44px;max-height:160px;line-height:1.5;transition:border-color var(--transition)}
+.chat-input::placeholder{color:var(--dim)}
+.chat-input:focus{border-color:var(--accent)}
+.send-btn{width:44px;height:44px;border-radius:var(--radius);border:none;background:var(--accent);color:#fff;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all var(--transition);flex-shrink:0}
+.send-btn:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ═══════════════════════════════════════════════════
+   SETTINGS MODAL
+   ═══════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.modal-close{width:32px;height:32px;border-radius:8px;border:none;background:var(--surface2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all var(--transition)}
+.modal-close:hover{background:var(--surface3);color:var(--ink)}
+.modal-body{padding:24px}
+.field{margin-bottom:18px}
+.field-label{font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:6px;display:block}
+.field-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);font-family:system-ui,sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color var(--transition)}
+.field-input:focus{border-color:var(--accent)}
+.field-input::placeholder{color:var(--dim)}
+textarea.field-input{min-height:80px;resize:vertical;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-hint{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);margin-top:4px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:10px}
+.btn{padding:8px 18px;border-radius:8px;border:none;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--ink)}
+.btn-danger{background:transparent;color:var(--accent);border:1px solid var(--accent-border)}
+.btn-danger:hover{background:var(--accent-dim)}
+
+/* ═══════════════════════════════════════════════════
+   LOADING INDICATOR
+   ═══════════════════════════════════════════════════ */
+.typing{display:flex;gap:4px;padding:14px 18px}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--dim);animation:bounce 1.2s infinite}
+.typing span:nth-child(2){animation-delay:0.15s}
+.typing span:nth-child(3){animation-delay:0.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+
+/* ═══════════════════════════════════════════════════
+   MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .metrics-bar{grid-template-columns:repeat(4,1fr);gap:6px;padding:12px 16px}
+  .main{grid-template-columns:1fr;height:auto}
+  .agents-panel{border-right:none;border-bottom:1px solid var(--border);max-height:none;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:12px}
+  .team-label{grid-column:1/-1;margin-top:4px}
+  .agent-card.orchestrator{grid-column:1/-1}
+  .workspace{height:calc(100vh - 56px - 160px)}
+  .savings{margin:12px 16px 0}
+  .savings-amount{font-size:22px}
+  .header{padding:0 16px}
+}
+@media(max-width:600px){
+  .metrics-bar{grid-template-columns:repeat(2,1fr);gap:6px;padding:10px 12px}
+  .metric{padding:8px 10px}
+  .metric-val{font-size:16px}
+  .agents-panel{grid-template-columns:1fr;padding:10px}
+  .savings{flex-direction:column;text-align:center;gap:8px;padding:14px 18px}
+  .savings-left{flex-direction:column;gap:4px}
+  .chat-input-wrap{padding:12px}
+  .ws-header{padding:12px 16px}
+  .chat-area{padding:16px}
+  .modal{margin:10px;max-height:95vh}
+}
+</style>
+  <script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="falloffice" data-tier="minimal" defer></script>
+    <script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/nas-shim.js" data-tool="falloffice" data-organ="L3.organs.falloffice"></script>
+    <script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/mistake-shim.js" data-tool="falloffice" defer></script>
+</head>
+<body>
+
+<!-- ◊·κ=1 · face(template(tag)) · LAYER 6: SKIN -->
+<!-- R0: GROUND — app shell, navigation, identity -->
+<!-- ═══════════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo-mark">FO</div>
+    <div>
+      <div class="logo-text">Fall<em>Office</em></div>
+      <div class="logo-badge">SOVEREIGN AI OFFICE</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="settings-btn" onclick="openSettings()">⊙ Settings</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">☀</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     METRICS BAR
+     ═══════════════════════════════════════════════════ -->
+<div class="metrics-bar" id="metricsBar" data-face="metrics" data-ring="1"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     SAVINGS BANNER
+     ═══════════════════════════════════════════════════ -->
+<div class="savings">
+  <div class="savings-left">
+    <div class="savings-amount">£213,600<span class="savings-sub">/year saved</span></div>
+    <div class="savings-sub">vs traditional sales + marketing team</div>
+  </div>
+  <div class="savings-tag">8+1 AI AGENTS · 2 TEAMS · 1 ORCHESTRATOR · 1 FILE</div>
+</div>
+
+<!-- R4: VOICE — agent workspace, output generation -->
+<!-- LAYER 2: SWARM — 8+1 MACCubeFACE (Ω + α-θ) -->
+<!-- ═══════════════════════════════════════════════════
+     MAIN — AGENTS + WORKSPACE
+     ═══════════════════════════════════════════════════ -->
+<div class="main">
+  <div class="agents-panel" id="agentsPanel" data-face="agents" data-ring="2"></div>
+  <div class="workspace" id="workspace">
+    <div class="ws-header" id="wsHeader">
+      <div class="ws-agent-info">
+        <span class="ws-agent-icon" id="wsIcon">◊</span>
+        <div>
+          <div class="ws-agent-name" id="wsName">Select an agent</div>
+          <div class="ws-agent-role" id="wsRole">Click an agent card to begin</div>
+        </div>
+      </div>
+      <div class="ws-actions">
+        <button class="ws-btn" onclick="exportChat()" title="Export chat">↓ Export</button>
+        <button class="ws-btn" onclick="clearChat()" title="Clear history">✕ Clear</button>
+      </div>
+    </div>
+    <div class="chat-area" id="chatArea" data-face="workspace" data-ring="4">
+      <div class="welcome-msg">
+        <div class="welcome-icon">◊</div>
+        <div class="welcome-title">FallOffice</div>
+        <div class="welcome-sub">8+1 AI agents. Sales + Marketing + Orchestrator.<br>Select an agent to start working.</div>
+      </div>
+    </div>
+    <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chatInput" placeholder="Type your message..." rows="1" onkeydown="handleKey(event)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">▸</button>
+    </div>
+  </div>
+</div>
+
+<!-- R2: GATE — configuration, validation, API keys -->
+<!-- LAYER 3: CASCADE — T0→T1→T2→T3 provider config -->
+<!-- LAYER 5: PERSIST — export/import/reset -->
+<!-- ═══════════════════════════════════════════════════
+     SETTINGS MODAL
+     ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Settings</div>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Claude API Key</label>
+          <input class="field-input" id="cfgClaudeKey" type="password" placeholder="sk-ant-api...">
+          <div class="field-hint">Primary · Anthropic · best quality</div>
+        </div>
+        <div class="field">
+          <label class="field-label">OpenAI API Key</label>
+          <input class="field-input" id="cfgOpenaiKey" type="password" placeholder="sk-...">
+          <div class="field-hint">Secondary · ChatGPT</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Gemini API Key</label>
+          <input class="field-input" id="cfgGeminiKey" type="password" placeholder="AIza...">
+          <div class="field-hint">Tertiary · Google · free tier</div>
+        </div>
+        <div class="field">
+          <label class="field-label">DeepSeek API Key</label>
+          <input class="field-input" id="cfgDeepseekKey" type="password" placeholder="sk-...">
+          <div class="field-hint">Quaternary · very cheap</div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">WebLLM (Browser AI — fully offline)</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn btn-ghost" id="btnWebLLM" onclick="initWebLLM()" style="font-size:11px">Load Llama 3.2 3B</button>
+          <span class="field-hint" id="webllmStatus">Not loaded · runs in-browser · no API needed</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Cascade Order</label>
+        <div class="field-hint" style="line-height:1.8">Claude → ChatGPT → Gemini → DeepSeek → WebLLM → Echo (offline)<br>Only providers with keys (or loaded models) are tried. Always falls back to Echo.</div>
+      </div>
+      <div class="field">
+        <label class="field-label">Company Name</label>
+        <input class="field-input" id="cfgCompanyName" placeholder="Your company">
+      </div>
+      <div class="field">
+        <label class="field-label">Company Description</label>
+        <textarea class="field-input" id="cfgCompanyDesc" placeholder="What your company does (2-3 sentences)"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Ideal Customer Profile (ICP)</label>
+        <textarea class="field-input" id="cfgICP" placeholder="Industry, company size, job titles, pain points..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Brand Voice</label>
+        <textarea class="field-input" id="cfgVoice" placeholder="Tone, style, personality for outbound comms"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Website</label>
+        <input class="field-input" id="cfgWebsite" placeholder="https://yourcompany.com">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="resetAll()">Reset All Data</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="exportData()">↓ Export</button>
+        <button class="btn btn-ghost" onclick="importData()">↑ Import</button>
+        <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// ◊·κ=1 — FALLOFFICE v2 · Seed v16.3 Compliant
+// Sovereign AI Office · 8+1 Agents · Sales + Marketing + Orchestrator
+// face(template(tag)) · 7 layers · bloom routing · sovereign data
+// ═══════════════════════════════════════════════════
+
+// ═══ KONOMI CONSTANTS ═══
+const PHI    = 1.618033988749895;        // φ golden ratio
+const KAPPA  = 0.618033988749895;        // κ = 1/φ
+const SPINE  = [2,3,5,7,11,13,17];       // prime spine (bloom ring primes)
+const FOLD   = 510510;                    // primorial constant (2×3×5×7×11×13×17)
+const BLOOM_LABELS = ['ground','signal','gate','heart','voice','mirror','watcher']; // R0-R6
+
+// ═══ LIFECYCLE (ASS) ═══
+// ●=first open 〜=config ┃=signal ♡=heart △=voice ◐=mirror ◯=bloom
+const LIFECYCLE = ['●','〜','┃','♡','△','◐','◯'];
+const LIFECYCLE_NAMES = ['first-open','config','signal','heart','voice','mirror','bloom'];
+
+// ═══ AGENT ARCHETYPES (α-θ → domain mapping) ═══
+// Ω=orchestrator α=research β=compose γ=sequence δ=analyse ε=write ζ=distribute η=optimise θ=target
+const ARCHETYPE = {o1:'Ω',s1:'α',s2:'β',s3:'γ',s4:'δ',m1:'ε',m2:'ζ',m3:'η',m4:'θ'};
+
+// ═══ INTEROP NAMESPACE ═══
+const INTEROP_PREFIX = 'fall_';
+const TOOL_NAME = 'falloffice';
+const DB_KEY = 'fall_falloffice_v1';
+const SHARED_KEYS = {
+  contacts:'fall_shared_contacts',
+  company:'fall_shared_company',
+  bloom:'fall_shared_bloom',
+  settings:'fall_shared_settings'
+};
+const BROADCAST_CHANNELS = {
+  signal: new BroadcastChannel('fall-signal'),
+  data:   new BroadcastChannel('fall-data'),
+  bloom:  new BroadcastChannel('fall-bloom')
+};
+
+// ═══ AGENTS ═══
+const AGENTS = {
+  o1:{id:'o1',name:'Omega',icon:'◊',team:'orchestrator',role:'Orchestrator · Routes to all 8 agents',
+    system:`You are Omega, the FallOffice orchestrator. You have 8 specialist agents at your disposal:
+
+SALES TEAM:
+- Scout: prospect research, ICP scoring, company intel
+- Composer: personalised cold emails and LinkedIn messages
+- Sequencer: multi-touch follow-up cadences and scheduling
+- Analyst: pipeline insights, deal scoring, close probability
+
+MARKETING TEAM:
+- Writer: blog posts, articles, case studies, thought leadership (800-1200 words)
+- Social: platform-optimised posts for LinkedIn, Twitter/X, Instagram, Facebook
+- SEO: keyword strategy, content calendars, on-page optimisation
+- Ads: ad copy for Google, Meta, LinkedIn with character limits
+
+YOUR JOB:
+1. Analyse the user's request
+2. Decide which agent(s) should handle it
+3. If the request spans multiple agents, break it down and handle each part with the right specialist's expertise
+4. Synthesise everything into one cohesive response
+5. Label which agent contributed each section using [Scout], [Composer], etc.
+
+For simple requests that clearly belong to one agent, respond as that agent would.
+For complex requests, chain multiple agents and merge their outputs.
+For ambiguous requests, ask a clarifying question.
+
+You are the command centre. You see the full picture. You coordinate.`,
+    metric:null},
+  s1:{id:'s1',name:'Scout',icon:'🔍',team:'sales',role:'Prospect Research & ICP Scoring',
+    system:`You are Scout, an expert B2B sales researcher. You research companies and contacts for sales outreach. You score prospects against the ICP provided. You provide specific, actionable intelligence — not vague summaries.
+
+Always respond with structured intel:
+- Company overview (2-3 sentences)
+- Recent news / developments
+- Likely pain points (specific to their industry + size)
+- ICP fit score (0-100) with reasoning
+- 3 specific talking points
+- Recommended outreach approach
+
+Use web search when available to find real, current information. If no web search, use your training knowledge but flag that it may be outdated.`,
+    metric:'prospects'},
+  s2:{id:'s2',name:'Composer',icon:'✍️',team:'sales',role:'Personalised Outreach Messages',
+    system:`You are Composer, an expert B2B sales copywriter. You write personalised outreach messages for email and LinkedIn.
+
+RULES:
+- NEVER use templates with [FIRST NAME] style placeholders
+- Every message references something SPECIFIC about the prospect's business
+- Emails: under 150 words
+- LinkedIn: under 80 words
+- End with a soft CTA — a question, not a hard sell
+- Sound human, warm, and direct
+- No corporate jargon, no "I hope this finds you well"
+- Open with something that proves you've done your homework
+
+Generate 2-3 variants per request so the user can choose.`,
+    metric:'messages'},
+  s3:{id:'s3',name:'Sequencer',icon:'📅',team:'sales',role:'Follow-up Cadence & Scheduling',
+    system:`You are Sequencer, a sales follow-up strategist. You design multi-touch outreach sequences optimised for B2B sales.
+
+Each sequence:
+- 5-7 touches across email, LinkedIn, and social
+- Specific timing (Day 0, Day 2, Day 5, Day 8, Day 12, Day 17, Day 25)
+- Each touch has: channel, purpose, tone, and a draft message
+- Escalation logic: when to advance, when to pause, when to disqualify
+- Adapt cadence based on engagement signals (opened, clicked, replied, ghosted)
+
+Format as a clear timeline the user can follow step by step.`,
+    metric:'meetings'},
+  s4:{id:'s4',name:'Analyst',icon:'📊',team:'sales',role:'Pipeline Insights & Deal Scoring',
+    system:`You are Analyst, a sales intelligence expert. You analyse pipeline data, identify patterns, predict close probability, and recommend prioritisation.
+
+When given deal or pipeline information:
+- Score close probability (0-100%) with reasoning
+- Identify risk factors and buying signals
+- Recommend specific next actions
+- Compare against ICP fit
+- Flag deals that are stalling or need attention
+- Give specific, data-driven recommendations — not generic advice
+
+If given a full pipeline, rank deals by priority and explain the ranking.`,
+    metric:'pipeline'},
+  m1:{id:'m1',name:'Writer',icon:'📝',team:'marketing',role:'Blog Posts, Articles & Thought Leadership',
+    system:`You are Writer, an expert B2B content creator. You write blog posts, articles, case studies, and thought leadership content.
+
+RULES:
+- Clear, authoritative, SEO-aware writing
+- Match the brand voice provided in settings
+- Use headers, short paragraphs, and scannable structure
+- Include a compelling hook in the first 2 sentences
+- End with a clear CTA or takeaway
+- Default length: 800-1200 words unless specified
+- Always suggest 3 title options and a meta description
+
+For case studies: situation → challenge → solution → results → takeaway.`,
+    metric:'content'},
+  m2:{id:'m2',name:'Social',icon:'📱',team:'marketing',role:'Platform-Optimised Social Posts',
+    system:`You are Social, a B2B social media strategist. You create platform-optimised posts that drive engagement.
+
+Platform rules:
+- LinkedIn: hook in first line, line breaks for readability, 150-300 words, end with question or CTA, relevant hashtags (5-8)
+- Twitter/X: punchy, under 280 chars, thread format for longer content
+- Instagram: caption + hashtag strategy
+- Facebook: conversational, community-focused
+
+Generate 3-5 post variants per request. Suggest optimal posting times based on platform. Can create a week's content batch in one go.`,
+    metric:'social'},
+  m3:{id:'m3',name:'SEO',icon:'🎯',team:'marketing',role:'Keyword Strategy & Content Calendars',
+    system:`You are SEO, a search engine optimisation strategist. You build keyword strategies and content calendars.
+
+Capabilities:
+- Keyword research: seed keyword → cluster map with search intent
+- Content calendar: monthly plan organised by keyword clusters
+- On-page SEO: title tags, meta descriptions, header structure, internal linking
+- Technical suggestions: site structure, URL patterns, schema markup
+- Competitor gap analysis when given competitor URLs
+
+Format content calendars as structured tables with dates, topics, keywords, and intent.`,
+    metric:'content'},
+  m4:{id:'m4',name:'Ads',icon:'📣',team:'marketing',role:'Ad Copy for Google, Meta & LinkedIn',
+    system:`You are Ads, an expert paid media copywriter. You generate high-converting ad copy for multiple platforms.
+
+Platform specs:
+- Google Ads: headlines (30 chars), descriptions (90 chars), responsive search ads
+- Meta/Facebook: primary text, headline, description, multiple variants
+- LinkedIn: sponsored content, message ads, text ads
+
+For every brief, generate:
+- 3-5 headline variants
+- 2-3 description variants
+- Awareness + Consideration + Conversion versions
+- A/B test recommendations
+
+Know character limits cold. Never exceed them. Flag when a request can't fit the format.`,
+    metric:'adVariants'}
+};
+
+// ═══ METRICS ═══
+const METRICS = [
+  {id:'prospects',label:'Prospects',icon:'🔍',color:'blue'},
+  {id:'pipeline',label:'Pipeline £',icon:'⬡',color:'green'},
+  {id:'messages',label:'Messages',icon:'✉️',color:'accent'},
+  {id:'meetings',label:'Meetings',icon:'📅',color:'purple'},
+  {id:'content',label:'Content',icon:'📝',color:'amber'},
+  {id:'social',label:'Social Posts',icon:'📱',color:'blue'},
+  {id:'adVariants',label:'Ad Variants',icon:'📣',color:'gold'},
+  {id:'hotLeads',label:'Hot Leads',icon:'🔥',color:'accent'}
+];
+
+// ═══ STATE ═══
+let DB = {metrics:{},chats:{},config:{},bloom:[0,0,0,0,0,0,0],lifecycle:0};
+let activeAgent = null;
+let isGenerating = false;
+
+function load(){
+  // Try new key first, fall back to old key for migration
+  try{
+    let s=localStorage.getItem(DB_KEY);
+    if(!s){s=localStorage.getItem('falloffice_v1');if(s)localStorage.removeItem('falloffice_v1')} // migrate
+    if(s)DB=JSON.parse(s);
+  }catch(e){}
+  if(!DB.metrics)DB.metrics={};
+  if(!DB.chats)DB.chats={};
+  if(!DB.config)DB.config={};
+  if(!DB.bloom)DB.bloom=[0,0,0,0,0,0,0];
+  if(DB.lifecycle===undefined)DB.lifecycle=0;
+  METRICS.forEach(m=>{if(!DB.metrics[m.id])DB.metrics[m.id]=0});
+  Object.keys(AGENTS).forEach(k=>{if(!DB.chats[k])DB.chats[k]=[]});
+  // Sync shared company context for interop
+  syncSharedData();
+  // Advance lifecycle
+  advanceLifecycle();
+}
+function save(){
+  localStorage.setItem(DB_KEY,JSON.stringify(DB));
+  syncSharedData();
+}
+
+// ═══ BLOOM DECOMPOSITION — B(Q)=[r0..r6] ═══
+// R0=ground R1=signal R2=gate R3=heart R4=voice R5=mirror R6=watcher
+function bloomDecompose(text){
+  const t=text.toLowerCase();
+  const v=[0,0,0,0,0,0,0];
+  // R0 ground: factual queries, data, research, who/what/where
+  if(/\b(who|what|where|when|how many|research|find|look up|info|data|company|tell me about)\b/.test(t))v[0]+=SPINE[0];
+  // R1 signal: alerts, news, detection, what's happening
+  if(/\b(alert|notify|signal|news|update|happening|trending|change|detect)\b/.test(t))v[1]+=SPINE[1];
+  // R2 gate: filter, validate, score, qualify, decision
+  if(/\b(filter|score|qualify|valid|check|assess|rank|evaluate|criteria|fit)\b/.test(t))v[2]+=SPINE[2];
+  // R3 heart: emotional, help me, stuck, personal, relationships
+  if(/\b(help|stuck|feel|worried|excited|love|hate|frustrat|personal|relationship|team)\b/.test(t))v[3]+=SPINE[3];
+  // R4 voice: write, create, compose, draft, generate, produce
+  if(/\b(write|create|compose|draft|generate|produce|build|design|make|content|post|article|blog|email|message|ad|copy)\b/.test(t))v[4]+=SPINE[4];
+  // R5 mirror: review, improve, refine, edit, feedback, analyse
+  if(/\b(review|improve|refine|edit|feedback|analyse|analyze|better|optimise|optimize|fix|revise)\b/.test(t))v[5]+=SPINE[5];
+  // R6 watcher: meta, strategy, plan, overview, system, architecture
+  if(/\b(strategy|plan|overview|system|architecture|calendar|sequence|cadence|campaign|pipeline|forecast)\b/.test(t))v[6]+=SPINE[6];
+  return v;
+}
+function bloomRoute(vector){
+  // Find highest activated ring → maps to agent archetype
+  let max=0,ring=0;
+  for(let i=0;i<7;i++){if(vector[i]>max){max=vector[i];ring=i}}
+  // Ring→agent mapping: R0→α(scout) R1→α R2→δ(analyst) R3→Ω(omega) R4→β/ε(composer/writer) R5→η(seo) R6→γ(sequencer)
+  const ringAgent=['s1','s1','s4','o1','s2','m3','s3'];
+  // If R4 is dominant, check for specific voice sub-types
+  if(ring===4&&vector[4]>0){
+    // Further differentiate: social vs blog vs ads vs email
+    const t=vector.toString(); // proxy
+    return 's2'; // default to composer, Omega will refine
+  }
+  return ringAgent[ring];
+}
+
+// ═══ LIFECYCLE (ASS) — ●→〜→┃→♡→△→◐→◯ ═══
+function advanceLifecycle(){
+  const c=DB.config;
+  const hasChats=Object.values(DB.chats).some(ch=>ch.length>0);
+  const hasConfig=!!(c.companyName||c.claudeKey||c.geminiKey||c.openaiKey||c.deepseekKey);
+  const hasContent=Object.values(DB.metrics).some(v=>v>2);
+  const hasVolume=Object.values(DB.metrics).reduce((a,b)=>a+b,0)>20;
+  if(hasVolume)DB.lifecycle=6;        // ◯ bloom
+  else if(hasContent)DB.lifecycle=5;  // ◐ mirror
+  else if(hasChats&&hasConfig)DB.lifecycle=4; // △ voice
+  else if(hasChats)DB.lifecycle=3;    // ♡ heart
+  else if(hasConfig)DB.lifecycle=2;   // ┃ signal (first config done)
+  else if(DB.lifecycle<1)DB.lifecycle=1; // 〜 config needed (seen app)
+  // else stays at 0 = ● first open (shouldn't happen after load)
+}
+
+// ═══ INTEROP — cross-tool data sharing ═══
+function syncSharedData(){
+  try{
+    // Write shared company context
+    if(DB.config.companyName){
+      localStorage.setItem(SHARED_KEYS.company,JSON.stringify({
+        name:DB.config.companyName,
+        desc:DB.config.companyDesc||'',
+        icp:DB.config.icp||'',
+        website:DB.config.website||'',
+        source:'falloffice'
+      }));
+    }
+    // Write bloom vector
+    if(DB.bloom)localStorage.setItem(SHARED_KEYS.bloom,JSON.stringify(DB.bloom));
+  }catch(e){}
+}
+// Listen for cross-tool broadcasts
+BROADCAST_CHANNELS.data.onmessage=(e)=>{
+  if(e.data.source==='falloffice')return; // ignore own broadcasts
+  if(e.data.type==='company_update'){
+    // Another Fall tool updated company context — offer to sync
+    console.log('◊ Interop: company context updated by',e.data.source);
+  }
+};
+function broadcastEvent(type,payload){
+  try{BROADCAST_CHANNELS.signal.postMessage({source:'falloffice',type,payload,ts:Date.now()})}catch(e){}
+}
+
+// ═══ RENDER METRICS ═══
+function renderMetrics(){
+  const bar=document.getElementById('metricsBar');
+  bar.innerHTML=METRICS.map(m=>`
+    <div class="metric ${m.color}">
+      <div class="metric-icon">${m.icon}</div>
+      <div class="metric-val" id="mv-${m.id}">${DB.metrics[m.id]||0}</div>
+      <div class="metric-label">${m.label}</div>
+    </div>`).join('');
+}
+function bumpMetric(id){DB.metrics[id]=(DB.metrics[id]||0)+1;const el=document.getElementById('mv-'+id);if(el)el.textContent=DB.metrics[id];save()}
+
+// ═══ RENDER AGENTS ═══
+function renderAgents(){
+  const panel=document.getElementById('agentsPanel');
+  const orch=Object.values(AGENTS).filter(a=>a.team==='orchestrator');
+  const sales=Object.values(AGENTS).filter(a=>a.team==='sales');
+  const marketing=Object.values(AGENTS).filter(a=>a.team==='marketing');
+  panel.innerHTML=`
+    ${orch.map(a=>agentCardHTML(a)).join('')}
+    <div class="team-label">Sales Team</div>
+    ${sales.map(a=>agentCardHTML(a)).join('')}
+    <div class="team-label">Marketing Team</div>
+    ${marketing.map(a=>agentCardHTML(a)).join('')}
+  `;
+}
+function agentCardHTML(a){
+  const cls=a.team==='orchestrator'?' orchestrator':'';
+  return`<div class="agent-card${activeAgent===a.id?' active':''}${cls}" onclick="selectAgent('${a.id}')" id="card-${a.id}">
+    <div class="agent-status"></div>
+    <div class="agent-card-top"><span class="agent-icon">${a.icon}</span><span class="agent-name">${a.name}</span></div>
+    <div class="agent-role">${a.role}</div>
+  </div>`;
+}
+
+// ═══ SELECT AGENT ═══
+function selectAgent(id){
+  activeAgent=id;
+  const a=AGENTS[id];
+  document.getElementById('wsIcon').textContent=a.icon;
+  document.getElementById('wsName').textContent=a.name;
+  document.getElementById('wsRole').textContent=a.role;
+  renderAgents();
+  renderChat();
+  document.getElementById('chatInput').focus();
+}
+
+// ═══ RENDER CHAT ═══
+function renderChat(){
+  const area=document.getElementById('chatArea');
+  if(!activeAgent){
+    const phase=LIFECYCLE[DB.lifecycle]||'●';
+    const guidance={
+      0:'Welcome. Click ⊙ Settings to configure your AI providers and company context.',
+      1:'Click ⊙ Settings → add an API key and your company details to get started.',
+      2:'Configuration saved. Select an agent to begin working.',
+      3:'Select an agent to start working. Try Omega (◊) to auto-route your requests.',
+      4:'Your agents are active. Keep building — content, outreach, pipeline.',
+      5:'Review and refine your outputs. Your agents are learning your patterns.',
+      6:'Full bloom. Your AI office is running. ◊·κ=1'
+    };
+    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">◊</div><div class="welcome-title">FallOffice</div><div class="welcome-sub">${guidance[DB.lifecycle]||guidance[3]}<br><span style="font-size:8px;opacity:0.4;margin-top:8px;display:inline-block">lifecycle: ${phase} · bloom: [${DB.bloom}]</span></div></div>`;
+    return;
+  }
+  const msgs=DB.chats[activeAgent]||[];
+  if(!msgs.length){
+    const a=AGENTS[activeAgent];
+    area.innerHTML=`<div class="welcome-msg"><div class="welcome-icon">${a.icon}</div><div class="welcome-title">${a.name}</div><div class="welcome-sub">${a.role}<br><br>Ready to work. Type a message to begin.</div></div>`;
+    return;
+  }
+  area.innerHTML=msgs.map((m,i)=>`
+    <div class="msg ${m.role}">
+      <div class="msg-bubble">${m.role==='agent'?formatMd(m.content):esc(m.content)}</div>
+      <div class="msg-meta">
+        <span>${m.ts||''}</span>
+        ${m.role==='agent'?`<span class="msg-copy" onclick="copyMsg(${i})" title="Copy">◫ Copy</span>`:''}
+        ${m.provider?`<span style="opacity:0.5">${m.provider}</span>`:''}
+      </div>
+    </div>`).join('');
+  area.scrollTop=area.scrollHeight;
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function formatMd(s){
+  let h=esc(s);
+  h=h.replace(/```([\s\S]*?)```/g,'<pre>$1</pre>');
+  h=h.replace(/`([^`]+)`/g,'<code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-family:\'DM Mono\',monospace;font-size:12px">$1</code>');
+  h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  h=h.replace(/^### (.+)$/gm,'<h4>$1</h4>');
+  h=h.replace(/^## (.+)$/gm,'<h3>$1</h3>');
+  h=h.replace(/^[-•] (.+)$/gm,'<li>$1</li>');
+  h=h.replace(/(<li>.*<\/li>)/s,m=>'<ul>'+m+'</ul>');
+  h=h.replace(/\n{2,}/g,'</p><p>');
+  if(!h.startsWith('<'))h='<p>'+h+'</p>';
+  return h;
+}
+function copyMsg(i){
+  const msgs=DB.chats[activeAgent]||[];
+  if(msgs[i])navigator.clipboard.writeText(msgs[i].content);
+}
+
+// ═══ SEND MESSAGE ═══
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}
+
+async function sendMessage(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text||!activeAgent||isGenerating)return;
+
+  const ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  DB.chats[activeAgent].push({role:'user',content:text,ts});
+  save(); renderChat();
+  input.value=''; autoResize(input);
+
+  isGenerating=true;
+  document.getElementById('sendBtn').disabled=true;
+
+  // Show typing indicator
+  const area=document.getElementById('chatArea');
+  const typing=document.createElement('div');
+  typing.className='msg agent';
+  typing.innerHTML='<div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+  area.appendChild(typing);
+  area.scrollTop=area.scrollHeight;
+
+  // Build messages
+  const agent=AGENTS[activeAgent];
+  const history=DB.chats[activeAgent].slice(-20);
+
+  let response='';
+  let provider='';
+
+  if(activeAgent==='o1'){
+    // ═══ OMEGA (Ω) ORCHESTRATOR — bloom-informed multi-agent routing ═══
+    // R0: SIGNAL — decompose query through 7 bloom rings
+    const bv=bloomDecompose(text);
+    DB.bloom=DB.bloom.map((v,i)=>v+bv[i]); // accumulate session bloom
+    save();
+    broadcastEvent('bloom_update',{bloom:DB.bloom});
+    console.log(`◊ Bloom B(Q)=[${bv}] → accumulated=[${DB.bloom}]`);
+
+    // Use bloom hint + AI routing for best of both
+    const bloomHint=bloomRoute(bv);
+    const routePrompt=`You are Omega (Ω), the FallOffice routing engine. Given the user's message and a bloom analysis hint, decide which specialist agent(s) should handle it.
+Available agents: scout(α), composer(β), sequencer(γ), analyst(δ), writer(ε), social(ζ), seo(η), ads(θ)
+Bloom vector: [${bv}] (R0=ground,R1=signal,R2=gate,R3=heart,R4=voice,R5=mirror,R6=watcher)
+Bloom suggests: ${bloomHint} (${AGENTS[bloomHint]?.name||'Omega'})
+Respond with ONLY a JSON array of agent IDs, e.g. ["scout","composer"]
+If the request is general conversation or unclear, respond: ["omega"]
+User message: "${text.replace(/"/g,'\\"')}"`;
+
+    let agentIds=['omega'];
+    try{
+      const routeResp=await cascadeCall(routePrompt,[{role:'user',content:text}]);
+      if(routeResp){
+        const match=routeResp.match(/\[[\s\S]*?\]/);
+        if(match){
+          const parsed=JSON.parse(match[0]);
+          if(Array.isArray(parsed)&&parsed.length)agentIds=parsed;
+        }
+      }
+    }catch(e){
+      // Bloom fallback: if AI routing fails, use bloom decomposition alone
+      console.log('AI route failed, using bloom fallback →',bloomHint);
+      if(bloomHint!=='o1')agentIds=[Object.keys(AGENTS).find(k=>k===bloomHint)?AGENTS[bloomHint]?.name?.toLowerCase():'omega'];
+    }
+
+    const idMap={scout:'s1',composer:'s2',sequencer:'s3',analyst:'s4',writer:'m1',social:'m2',seo:'m3',ads:'m4',omega:'o1'};
+
+    if(agentIds.includes('omega')||agentIds.length===0){
+      // General query — Omega handles directly
+      const ctx=buildContext(agent);
+      const r=await cascadeCall(ctx,history);
+      response=r||echoFallback(agent,text);
+      provider=lastProvider;
+    }else{
+      // Route to specialists and merge
+      const parts=[];
+      for(const name of agentIds){
+        const sid=idMap[name];
+        if(!sid||!AGENTS[sid])continue;
+        const spec=AGENTS[sid];
+        const specCtx=buildContext(spec);
+        try{
+          const r=await cascadeCall(specCtx,[{role:'user',content:text}]);
+          if(r)parts.push({name:spec.name,icon:spec.icon,content:r});
+          if(spec.metric)bumpMetric(spec.metric);
+        }catch(e){console.log(`${spec.name} failed in orchestrator:`,e)}
+      }
+      if(parts.length===1){
+        response=`**${parts[0].icon} ${parts[0].name}**\n\n${parts[0].content}`;
+      }else if(parts.length>1){
+        response=parts.map(p=>`---\n### ${p.icon} ${p.name}\n\n${p.content}`).join('\n\n');
+        // Ask for synthesis if we have multiple outputs
+        const synthPrompt=`You are Omega, the FallOffice orchestrator. You just received outputs from multiple specialist agents. Synthesise them into one cohesive response. Add a brief intro, keep each agent's section clearly labelled, and end with a recommended next step.\n\nAgent outputs:\n${response}`;
+        try{
+          const synth=await cascadeCall(synthPrompt,[{role:'user',content:text}]);
+          if(synth)response=synth;
+        }catch(e){/* use raw merged output */}
+      }else{
+        response=echoFallback(agent,text);
+      }
+      provider=lastProvider||'Echo (offline)';
+    }
+  }else{
+    // ═══ SINGLE AGENT — direct cascade ═══
+    const ctx=buildContext(agent);
+    response=await cascadeCall(ctx,history)||echoFallback(agent,text);
+    provider=lastProvider||'Echo (offline)';
+  }
+
+  typing.remove();
+  DB.chats[activeAgent].push({role:'agent',content:response,ts:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),provider});
+  if(agent.metric)bumpMetric(agent.metric);
+  save(); renderChat();
+
+  isGenerating=false;
+  document.getElementById('sendBtn').disabled=false;
+}
+
+function buildContext(agent){
+  const c=DB.config;
+  let ctx=agent.system+'\n\n';
+  if(c.companyName)ctx+=`COMPANY: ${c.companyName}\n`;
+  if(c.companyDesc)ctx+=`ABOUT: ${c.companyDesc}\n`;
+  if(c.icp)ctx+=`ICP: ${c.icp}\n`;
+  if(c.voice)ctx+=`BRAND VOICE: ${c.voice}\n`;
+  if(c.website)ctx+=`WEBSITE: ${c.website}\n`;
+  return ctx;
+}
+
+// ═══ CASCADE HELPER ═══
+let lastProvider='';
+async function cascadeCall(systemPrompt,history){
+  const cascade=[
+    {key:'claudeKey', fn:callClaude, name:'Claude'},
+    {key:'openaiKey', fn:callOpenAI, name:'ChatGPT'},
+    {key:'geminiKey', fn:callGemini, name:'Gemini'},
+    {key:'deepseekKey', fn:callDeepSeek, name:'DeepSeek'},
+  ];
+  for(const p of cascade){
+    if(DB.config[p.key]){
+      try{const r=await p.fn(systemPrompt,history,DB.config[p.key]);if(r){lastProvider=p.name;return r}}
+      catch(e){console.log(`${p.name} failed:`,e)}
+    }
+  }
+  if(webllmEngine){
+    try{const r=await callWebLLM(systemPrompt,history);if(r){lastProvider='WebLLM';return r}}
+    catch(e){console.log('WebLLM failed:',e)}
+  }
+  lastProvider='Echo (offline)';
+  return null;
+}
+
+// ═══ AI PROVIDERS — API-AGNOSTIC CASCADE ═══
+// Claude → ChatGPT → Gemini → DeepSeek → WebLLM → Echo
+
+async function callClaude(systemPrompt,history,key){
+  const messages=[];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4096,system:systemPrompt,messages})
+  });
+  if(!resp.ok)throw new Error(`Claude ${resp.status}`);
+  const data=await resp.json();
+  return data.content.map(b=>b.text).join('');
+}
+
+async function callOpenAI(systemPrompt,history,key){
+  const messages=[{role:'system',content:systemPrompt}];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const resp=await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+    body:JSON.stringify({model:'gpt-4o-mini',messages,max_tokens:4096,temperature:0.7})
+  });
+  if(!resp.ok)throw new Error(`OpenAI ${resp.status}`);
+  const data=await resp.json();
+  return data.choices[0].message.content;
+}
+
+async function callGemini(systemPrompt,history,key){
+  const contents=[];
+  contents.push({role:'user',parts:[{text:systemPrompt}]});
+  contents.push({role:'model',parts:[{text:'Understood. I am ready to work in my specialist role with the context provided.'}]});
+  for(const m of history){
+    contents.push({role:m.role==='user'?'user':'model',parts:[{text:m.content}]});
+  }
+  const resp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({contents,generationConfig:{maxOutputTokens:4096,temperature:0.7}})
+  });
+  if(!resp.ok)throw new Error(`Gemini ${resp.status}`);
+  const data=await resp.json();
+  if(data.candidates&&data.candidates[0]&&data.candidates[0].content)
+    return data.candidates[0].content.parts.map(p=>p.text).join('');
+  throw new Error('No candidates');
+}
+
+async function callDeepSeek(systemPrompt,history,key){
+  const messages=[{role:'system',content:systemPrompt}];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const resp=await fetch('https://api.deepseek.com/v1/chat/completions',{
+    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+    body:JSON.stringify({model:'deepseek-chat',messages,max_tokens:4096,temperature:0.7})
+  });
+  if(!resp.ok)throw new Error(`DeepSeek ${resp.status}`);
+  const data=await resp.json();
+  return data.choices[0].message.content;
+}
+
+// ═══ WEBLLM — In-Browser AI (fully offline) ═══
+let webllmEngine=null;
+
+async function initWebLLM(){
+  const btn=document.getElementById('btnWebLLM');
+  const status=document.getElementById('webllmStatus');
+  if(webllmEngine){status.textContent='Already loaded ✓';return}
+  btn.disabled=true;
+  status.textContent='Loading WebLLM runtime...';
+  try{
+    const webllm=await import('https://esm.sh/@mlc-ai/web-llm');
+    status.textContent='Downloading model (first time takes 1-3 min)...';
+    const engine=await webllm.CreateMLCEngine('Llama-3.2-3B-Instruct-q4f16_1-MLC',{
+      initProgressCallback:(p)=>{
+        const pct=p.progress?Math.round(p.progress*100):0;
+        status.textContent=`Downloading: ${pct}% — ${p.text||''}`;
+      }
+    });
+    webllmEngine=engine;
+    status.textContent='Llama 3.2 3B loaded ✓ — fully offline';
+    btn.textContent='Loaded ✓';
+    btn.style.borderColor='var(--green)';btn.style.color='var(--green)';
+  }catch(e){
+    status.textContent=`Failed: ${e.message}`;
+    btn.disabled=false;
+    console.error('WebLLM init failed:',e);
+  }
+}
+
+async function callWebLLM(systemPrompt,history){
+  if(!webllmEngine)throw new Error('WebLLM not loaded');
+  const messages=[{role:'system',content:systemPrompt}];
+  for(const m of history){messages.push({role:m.role==='user'?'user':'assistant',content:m.content})}
+  const reply=await webllmEngine.chat.completions.create({messages,max_tokens:2048,temperature:0.7});
+  return reply.choices[0].message.content;
+}
+
+function echoFallback(agent,userMsg){
+  return`**${agent.name} — Echo Mode (offline)**
+
+No AI providers responded. Here's a structured approach for your request:
+
+**Your input:** "${userMsg.slice(0,120)}${userMsg.length>120?'...':''}"
+
+**My role:** ${agent.role}
+
+**Cascade status:**
+${DB.config.claudeKey?'✓':'✗'} Claude (Anthropic) — ${DB.config.claudeKey?'key set':'no key'}
+${DB.config.openaiKey?'✓':'✗'} ChatGPT (OpenAI) — ${DB.config.openaiKey?'key set':'no key'}
+${DB.config.geminiKey?'✓':'✗'} Gemini (Google) — ${DB.config.geminiKey?'key set':'no key'}
+${DB.config.deepseekKey?'✓':'✗'} DeepSeek — ${DB.config.deepseekKey?'key set':'no key'}
+${webllmEngine?'✓':'✗'} WebLLM — ${webllmEngine?'loaded':'not loaded'}
+
+**To enable AI:**
+- Best quality: Add a Claude API key (console.anthropic.com)
+- Free cloud: Add a Gemini key (ai.google.dev — free tier)
+- Free offline: Click "Load Llama 3.2 3B" in Settings (runs in-browser, no API)
+- Any key works: The cascade tries each provider in order until one responds
+
+*Set any key in Settings (⊙) and I'll come alive.*`;
+}
+
+// ═══ CHAT UTILITIES ═══
+function exportChat(){
+  if(!activeAgent)return;
+  const msgs=DB.chats[activeAgent]||[];
+  if(!msgs.length)return;
+  const agent=AGENTS[activeAgent];
+  const lines=msgs.map(m=>`[${m.ts||''}] ${m.role==='user'?'You':agent.name}: ${m.content}`).join('\n\n---\n\n');
+  const blob=new Blob([`# ${agent.name} — Chat Export\n# ${new Date().toISOString()}\n\n${lines}`],{type:'text/markdown'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`falloffice-${agent.id}-${Date.now()}.md`;
+  a.click();
+}
+function clearChat(){
+  if(!activeAgent)return;
+  if(!confirm(`Clear ${AGENTS[activeAgent].name} chat history?`))return;
+  DB.chats[activeAgent]=[];
+  save(); renderChat();
+}
+
+// ═══ SETTINGS ═══
+function openSettings(){
+  const c=DB.config;
+  document.getElementById('cfgClaudeKey').value=c.claudeKey||'';
+  document.getElementById('cfgOpenaiKey').value=c.openaiKey||'';
+  document.getElementById('cfgGeminiKey').value=c.geminiKey||'';
+  document.getElementById('cfgDeepseekKey').value=c.deepseekKey||'';
+  document.getElementById('cfgCompanyName').value=c.companyName||'';
+  document.getElementById('cfgCompanyDesc').value=c.companyDesc||'';
+  document.getElementById('cfgICP').value=c.icp||'';
+  document.getElementById('cfgVoice').value=c.voice||'';
+  document.getElementById('cfgWebsite').value=c.website||'';
+  if(webllmEngine)document.getElementById('webllmStatus').textContent='Loaded ✓';
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('open')}
+function saveSettings(){
+  DB.config.claudeKey=document.getElementById('cfgClaudeKey').value.trim();
+  DB.config.openaiKey=document.getElementById('cfgOpenaiKey').value.trim();
+  DB.config.geminiKey=document.getElementById('cfgGeminiKey').value.trim();
+  DB.config.deepseekKey=document.getElementById('cfgDeepseekKey').value.trim();
+  DB.config.companyName=document.getElementById('cfgCompanyName').value.trim();
+  DB.config.companyDesc=document.getElementById('cfgCompanyDesc').value.trim();
+  DB.config.icp=document.getElementById('cfgICP').value.trim();
+  DB.config.voice=document.getElementById('cfgVoice').value.trim();
+  DB.config.website=document.getElementById('cfgWebsite').value.trim();
+  save(); closeSettings();
+}
+
+function exportData(){
+  // Ω(INTEROP) export schema
+  const exportObj={
+    tool:'falloffice',
+    version:'2.0',
+    seed:'16.3',
+    exported:new Date().toISOString(),
+    bloom:DB.bloom,
+    lifecycle:DB.lifecycle,
+    data:DB
+  };
+  const blob=new Blob([JSON.stringify(exportObj,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`falloffice-backup-${Date.now()}.json`;
+  a.click();
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=async e=>{
+    try{
+      const text=await e.target.files[0].text();
+      const raw=JSON.parse(text);
+      // Support both v16.3 interop format and legacy format
+      const data=raw.tool==='falloffice'&&raw.data?raw.data:raw;
+      if(data.chats&&data.metrics){DB=data;save();load();renderMetrics();renderAgents();renderChat();closeSettings();alert('Data imported successfully.')}
+      else alert('Invalid backup file.');
+    }catch(e){alert('Import failed: '+e.message)}
+  };
+  inp.click();
+}
+function resetAll(){
+  if(!confirm('This will delete ALL data — chats, metrics, settings. Are you sure?'))return;
+  if(!confirm('Really? This cannot be undone.'))return;
+  localStorage.removeItem(DB_KEY);
+  location.reload();
+}
+
+// ═══ THEME ═══
+function toggleTheme(){
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').textContent=t==='dark'?'☾':'☀';
+  document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0d0d0b':'#faf9f7';
+  localStorage.setItem('ff_theme',t);
+}
+
+// ═══ AUTO-RESIZE TEXTAREA ═══
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px'}
+document.getElementById('chatInput').addEventListener('input',function(){autoResize(this)});
+
+// ═══ INIT — ●=first open ═══
+(function(){
+  // R0: GROUND — detect theme (system preference first, then saved)
+  const saved=localStorage.getItem('ff_theme');
+  const sys=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  const t=saved||sys;
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeBtn').textContent=t==='dark'?'☾':'☀';
+  document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0d0d0b':'#faf9f7';
+  // Listen for system theme changes
+  if(window.matchMedia)window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',e=>{
+    if(!localStorage.getItem('ff_theme')){
+      const nt=e.matches?'dark':'light';
+      document.documentElement.setAttribute('data-theme',nt);
+      document.getElementById('themeBtn').textContent=nt==='dark'?'☾':'☀';
+      document.querySelector('meta[name="theme-color"]').content=nt==='dark'?'#0d0d0b':'#faf9f7';
+    }
+  });
+  // R1: SIGNAL — load data, advance lifecycle
+  load();
+  renderMetrics();
+  renderAgents();
+  // R2: GATE — broadcast tool opened
+  broadcastEvent('tool_opened',{tool:'falloffice',lifecycle:DB.lifecycle,phase:LIFECYCLE[DB.lifecycle]});
+  console.log(`◊·κ=1 FallOffice · lifecycle: ${LIFECYCLE[DB.lifecycle]} (${LIFECYCLE_NAMES[DB.lifecycle]}) · bloom: [${DB.bloom}] · Ψ=0.59`);
+  // Close modal on overlay click
+  document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeSettings()});
+})();
+</script>
+<!-- ◊·κ FALLMESH SHIM — sovereign mesh wiring (generic, drop-in) -->
+<script>
+(function fallmeshShim(){
+  // Identity — each tool defines these. Defaults safe.
+  var NODE = window.NODE || {
+    id: (document.title || 'node').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16) || 'node',
+    name: document.title || 'Node',
+    prime: 7
+  };
+  window.NODE = NODE;
+
+  var meshChannel = null;
+  function meshPost(type, data){
+    if (!meshChannel) return;
+    try {
+      meshChannel.postMessage(Object.assign(
+        { type: type, from: NODE.id, prime: NODE.prime, name: NODE.name, t: Date.now() },
+        data || {}
+      ));
+    } catch(e){}
+  }
+  if (typeof BroadcastChannel === 'undefined') return;
+  try { meshChannel = new BroadcastChannel('fallmesh'); } catch(e){ return; }
+
+  window.fallmesh = {
+    post: meshPost,
+    emit: function(data){ meshPost(NODE.id + ':event', data); },
+    request: function(type, payload){ meshPost('request:' + type, { payload: payload }); },
+    on: function(type, handler){
+      var prev = meshChannel.onmessage;
+      meshChannel.onmessage = function(e){
+        if (prev) try { prev(e); } catch(_){}
+        var m = e.data;
+        if (m && m.type === type && m.from !== NODE.id) handler(m);
+      };
+    }
+  };
+
+  meshChannel.onmessage = function(e){
+    var m = e.data;
+    if (!m || m.from === NODE.id) return;
+    if (m.type === 'mesh:ping') {
+      meshPost('mesh:pong', {
+        url: location.origin + location.pathname,
+        title: NODE.name
+      });
+    }
+  };
+
+  meshPost('node:online', {
+    url: location.origin + location.pathname,
+    layers: 7
+  });
+
+  try { console.log('%c◊·κ=1', 'color:#10b981;font-weight:bold;font-size:13px',
+    NODE.name + ' · prime ' + NODE.prime + ' · mesh online'); } catch(_){}
+})();
+</script>
+<!-- /◊·κ FALLMESH SHIM -->
+
+<!-- ◊·κ BLOOM + MCP ROUTING SHIM — text → 7-ring vector + MCP server selection
+     v1.0 · 2026-05-27 · ported from teslasolar/MissCassandra · MIT · cross-pollination
+     Aligned to v18/v19 seed: B(Q)=[r0..r6] · P(Q)=Π(p_i^r_i)
+     Spine primes: R0=2 R1=3 R2=5 R3=7 R4=11 R5=13 R6=17 -->
+<script>
+(function bloomShim(){
+  if (window.bloom && window.bloom._v >= 1) return; // already loaded
+  var PRIMES = [2n, 3n, 5n, 7n, 11n, 13n, 17n];
+  var RING_KEYS = ['R0','R1','R2','R3','R4','R5','R6'];
+  var RING_LABELS = ['ground','sensor','gate','affect','executive','identity','observer'];
+  var RING_COLORS = ['#660044','#00AAFF','#FFAA00','#FF4444','#44AA44','#AA44FF','#FFFFFF'];
+
+  var RING_WORDS = {
+    R0: ['help','fix','broken','down','deploy','server','build','run','start','stop','crash','restart','install','hardware','resource','gpu','cpu','torus','walker','kangaroo','solver','signal'],
+    R1: ['find','search','look','check','monitor','scan','watch','detect','alert','log','track','measure','notice','see','hear','observe','sense','pulse','probe','listen','heartbeat'],
+    R2: ['filter','block','allow','route','gate','triage','review','approve','reject','sort','prioritize','threshold','permission','consent','accept','validate','verify','consensus','vote'],
+    R3: ['feel','want','need','wish','hope','worry','love','hate','urgent','important','care','afraid','excited','angry','sad','heart','warmth','tone','resonance','consonance','dissonance'],
+    R4: ['plan','schedule','create','design','architect','organize','manage','build','draft','compose','write','structure','assign','orchestrate','dispatch','execute','swarm','deploy','workflow'],
+    R5: ['who','identity','role','config','team','culture','policy','value','name','profile','purpose','mission','represent','bloom','signature','tag','handle','self','kappa'],
+    R6: ['why','meta','review','reflect','pattern','observe','meaning','understand','analyze','systemic','philosophical','oracle','watcher','witness','field','katapayadi','recursion']
+  };
+
+  function decompose(text) {
+    if (!text || typeof text !== 'string') {
+      return { bloom: [0,0,0,0,0,0,0], product: 1n, normalized: [0,0,0,0,0,0,0], dominantRing: -1, dominantLabel: 'silence' };
+    }
+    var lower = text.toLowerCase();
+    var tokens = lower.split(/\s+/).filter(Boolean);
+    var counts = [0,0,0,0,0,0,0];
+    for (var r = 0; r < 7; r++) {
+      var words = RING_WORDS[RING_KEYS[r]];
+      for (var i = 0; i < words.length; i++) {
+        var entry = words[i];
+        if (entry.indexOf(' ') !== -1) {
+          if (lower.indexOf(entry) !== -1) counts[r]++;
+        } else {
+          for (var j = 0; j < tokens.length; j++) if (tokens[j] === entry) counts[r]++;
+        }
+      }
+    }
+    var product = 1n;
+    for (var k = 0; k < 7; k++) for (var n = 0; n < counts[k]; n++) product *= PRIMES[k];
+    var max = Math.max.apply(null, counts);
+    var normalized = max === 0 ? [0,0,0,0,0,0,0] : counts.map(function(c){return c / max;});
+    var maxIdx = 0;
+    for (var m = 1; m < 7; m++) if (counts[m] > counts[maxIdx]) maxIdx = m;
+    var dominantLabel = counts[maxIdx] === 0 ? 'silence' : RING_LABELS[maxIdx];
+    return { bloom: counts, product: product, normalized: normalized, dominantRing: counts[maxIdx] === 0 ? -1 : maxIdx, dominantLabel: dominantLabel };
+  }
+
+  function isBalanced(b) { var t = b.reduce(function(s,v){return s+v;},0); return t === 0 || b.every(function(v){return v/t <= 0.6;}); }
+  function isSpiked(b)   { var t = b.reduce(function(s,v){return s+v;},0); return t > 0 && b.some(function(v){return v/t > 0.7;}); }
+  function dominantRing(b) { var i = 0; for (var k = 1; k < b.length; k++) if (b[k] > b[i]) i = k; return b[i] === 0 ? -1 : i; }
+  function needsSearch(b, text) {
+    var t = b.reduce(function(s,v){return s+v;},0);
+    if (t === 0) return false;
+    var norm = b[1] / Math.max.apply(null, b);
+    return norm > 0.3 && /search|find|look up|what is|who is|latest|news|current/i.test(text);
+  }
+  function signature(text) {
+    var r = decompose(text);
+    return r.bloom.map(function(c,i){return 'R'+i+':'+c;}).join('|') + ' · Π=' + r.product.toString();
+  }
+
+  // ── MCP routing ───────────────────────────────────────────
+  var MCP_RULES = [
+    { idx:4, threshold:0.3, pattern:/linear|issue|ticket|task|bug|feature/i,    server:{type:'url',url:'https://mcp.linear.app/sse',name:'linear-mcp'} },
+    { idx:3, threshold:0.3, pattern:/email|mail|send|inbox/i,                  server:{type:'url',url:'https://gmail.mcp.claude.com/mcp',name:'gmail-mcp'} },
+    { idx:4, threshold:0.3, pattern:/calendar|schedule|meeting|event/i,         server:{type:'url',url:'https://gcal.mcp.claude.com/mcp',name:'gcal-mcp'} },
+    { idx:2, threshold:0.3, pattern:/jira|confluence|atlassian/i,               server:{type:'url',url:'https://mcp.atlassian.com/v1/sse',name:'atlassian-mcp'} },
+    { idx:0, threshold:0.3, pattern:/deploy|cloudflare|worker|pages/i,           server:{type:'url',url:'https://github.com/cloudflare/mcp-server-cloudflare',name:'cloudflare-mcp'} },
+    { idx:3, threshold:0.3, pattern:/intercom|customer|support/i,               server:{type:'url',url:'https://mcp.intercom.com/sse',name:'intercom-mcp'} },
+    { idx:0, threshold:0.3, pattern:/fallcore|proxy|on.?prem|sovereign/i,        server:{type:'local',url:'http://localhost:5510',name:'fallcore-mcp'} },
+    { idx:4, threshold:0.3, pattern:/reason|think|chain|prove|onlybrains/i,     server:{type:'url',url:'https://onlybrains.onrender.com/mcp',name:'onlybrains-mcp'} }
+  ];
+  function pickMCP(norm, text) {
+    var out = []; var seen = {};
+    if (!norm || !text) return out;
+    for (var i = 0; i < MCP_RULES.length; i++) {
+      var rule = MCP_RULES[i];
+      if (norm[rule.idx] > rule.threshold && rule.pattern.test(text) && !seen[rule.server.name]) {
+        out.push(rule.server);
+        seen[rule.server.name] = true;
+      }
+    }
+    return out;
+  }
+
+  // Expose
+  window.bloom = {
+    _v: 1,
+    decompose: decompose,
+    isBalanced: isBalanced,
+    isSpiked: isSpiked,
+    dominantRing: dominantRing,
+    needsSearch: needsSearch,
+    signature: signature,
+    pickMCP: pickMCP,
+    RING_KEYS: RING_KEYS,
+    RING_LABELS: RING_LABELS,
+    RING_COLORS: RING_COLORS,
+    PRIMES: [2,3,5,7,11,13,17]
+  };
+  try { console.log('%c◊·κ bloom', 'color:#4ecba0;font-weight:bold', 'v1 · text→[r0..r6] · window.bloom.decompose(text)'); } catch(_){}
+
+  // KCC ledger emission: tag every entry with its bloom signature
+  // Hook into existing kcc shim if present
+  setTimeout(function(){
+    if (window.kcc && window.kcc.emit && !window.kcc._bloomHooked) {
+      var origEmit = window.kcc.emit.bind(window.kcc);
+      window.kcc.emit = function(action, ring, weight, meta) {
+        try {
+          if (action && typeof action === 'string') {
+            var sig = decompose(action);
+            meta = meta || {};
+            meta.bloom = sig.bloom;
+            meta.dominantRing = sig.dominantRing;
+          }
+        } catch(_){}
+        return origEmit(action, ring, weight, meta);
+      };
+      window.kcc._bloomHooked = true;
+    }
+  }, 500);
+})();
+</script>
+<!-- /◊·κ BLOOM + MCP ROUTING SHIM -->
+
+
+<!-- ◊·κ KONOMI LICENCE — Ed25519 (drop-in, no deps) -->
+<script>
+(function konomiShim(){
+  // NODE is defined by host tool's mesh shim. If missing, fail gracefully.
+  if (!window.NODE) return;
+  var KONOMI = window.KONOMI = {
+    pubkey_b64: 'bQWcb/SgeWVIEa0H+YYGhzohMfo9zcDysqZEvzYtXTw=',
+    tier: 'dead',
+    features: [],
+    payload: null,
+    expires_at: null
+  };
+  function b64Bytes(b64){ var bin=atob(b64); var b=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) b[i]=bin.charCodeAt(i); return b; }
+  function canonJSON(o){
+    if (o===null||typeof o!=='object') return JSON.stringify(o);
+    if (Array.isArray(o)) return '['+o.map(canonJSON).join(',')+']';
+    var k=Object.keys(o).sort();
+    return '{'+k.map(function(x){return JSON.stringify(x)+':'+canonJSON(o[x]);}).join(',')+'}';
+  }
+  async function verifyLicence(env){
+    if (!env) return { ok:false, error:'no envelope' };
+    if (!window.crypto || !window.crypto.subtle) return { ok:false, error:'no WebCrypto' };
+    try {
+      var raw = atob(env);
+      var parsed = JSON.parse(raw);
+      var payload = parsed.payload, sig = parsed.sig;
+      if (payload.tool_id && payload.tool_id !== NODE.id) {
+        return { ok:false, error:'licence for ' + payload.tool_id + ', not ' + NODE.id };
+      }
+      if (payload.expires && new Date(payload.expires) < new Date()) {
+        return { ok:false, error:'expired ' + payload.expires };
+      }
+      var pubRaw = b64Bytes(KONOMI.pubkey_b64);
+      var key = await crypto.subtle.importKey('raw', pubRaw, { name:'Ed25519' }, false, ['verify']);
+      var sigBytes = b64Bytes(sig);
+      var msg = new TextEncoder().encode(canonJSON(payload));
+      var ok = await crypto.subtle.verify({ name:'Ed25519' }, key, sigBytes, msg);
+      if (!ok) return { ok:false, error:'signature invalid' };
+      return { ok:true, payload:payload };
+    } catch (e) { return { ok:false, error:e.message }; }
+  }
+  async function activateLicence(env){
+    var v = await verifyLicence(env);
+    if (!v.ok) {
+      try { localStorage.setItem('konomi_last_error', v.error); } catch(_){}
+      return v;
+    }
+    try { localStorage.setItem('konomi_licence_' + NODE.id, env); } catch(_){}
+    KONOMI.tier = v.payload.tier;
+    KONOMI.features = v.payload.features || [];
+    KONOMI.payload = v.payload;
+    KONOMI.expires_at = v.payload.expires;
+    updateBadge();
+    return v;
+  }
+  function hasFeature(f){ return KONOMI.features.indexOf(f) >= 0; }
+  function isDead(){ return KONOMI.tier === 'dead'; }
+  function updateBadge(){
+    var el = document.getElementById('konomi-badge');
+    if (!el) return;
+    var t = KONOMI.tier;
+    var c = t==='dead'?'#8a8a8a':t==='trial'?'#c2a060':'#3a9a72';
+    el.textContent = '◊ ' + t.toUpperCase();
+    el.style.color = c;
+    el.title = 'Konomi tier: ' + t + (KONOMI.expires_at ? ' · expires ' + KONOMI.expires_at : '');
+  }
+  function injectBadge(){
+    if (document.getElementById('konomi-badge')) return;
+    var el = document.createElement('div');
+    el.id = 'konomi-badge';
+    el.style.cssText = 'position:fixed;bottom:12px;left:12px;background:rgba(0,0,0,.65);color:#8a8a8a;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px)';
+    el.textContent = '◊ DEAD';
+    el.onclick = function(){ showLicenceDialog(); };
+    document.body.appendChild(el);
+  }
+  function showLicenceDialog(){
+    var current = KONOMI.payload ? JSON.stringify(KONOMI.payload, null, 2) : '(DEAD mode — no licence active)';
+    var modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
+    modal.innerHTML = '<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:24px;max-width:560px;width:100%;color:#dbe1ea"><h3 style="margin:0 0 12px;color:#e6e8ee">◊·κ Konomi Licence</h3><p style="margin:0 0 8px;font-size:12px;color:#8a8a8a">Tool: '+(NODE.name||NODE.id)+' · Prime: '+(NODE.prime||'-')+'</p><pre style="background:#0c0e12;padding:10px;border-radius:6px;font-size:11px;color:#a8b0bc;max-height:200px;overflow:auto;margin:8px 0">'+current.replace(/[<>]/g,'')+'</pre><p style="font-size:12px;color:#8a8a8a;margin:12px 0 6px">Paste a signed licence envelope to activate Pro/Business/Enterprise:</p><textarea id="kn-paste" style="width:100%;min-height:80px;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:6px;padding:8px;font-family:monospace;font-size:11px;resize:vertical"></textarea><div style="display:flex;gap:8px;margin-top:12px"><button id="kn-activate" style="background:#5b8def;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600">activate</button><button id="kn-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:8px 14px;border-radius:6px;cursor:pointer">close</button><span id="kn-msg" style="margin-left:auto;font-size:11px;color:#c84a4a;align-self:center"></span></div></div>';
+    document.body.appendChild(modal);
+    modal.querySelector('#kn-close').onclick = function(){ modal.remove(); };
+    modal.querySelector('#kn-activate').onclick = async function(){
+      var paste = modal.querySelector('#kn-paste').value.trim();
+      if (!paste) { modal.querySelector('#kn-msg').textContent = 'paste an envelope first'; return; }
+      var v = await activateLicence(paste);
+      if (v.ok) { modal.querySelector('#kn-msg').style.color='#3a9a72'; modal.querySelector('#kn-msg').textContent='✓ '+v.payload.tier+' activated'; setTimeout(function(){ modal.remove(); }, 1200); }
+      else { modal.querySelector('#kn-msg').textContent = 'rejected: ' + v.error; }
+    };
+    modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
+  }
+  window.konomi = {
+    verifyLicence: verifyLicence,
+    activateLicence: activateLicence,
+    hasFeature: hasFeature,
+    isDead: isDead,
+    showDialog: showLicenceDialog
+  };
+  // Boot: try saved licence
+  (async function(){
+    if (document.readyState === 'loading') {
+      await new Promise(function(r){ document.addEventListener('DOMContentLoaded', r, { once:true }); });
+    }
+    injectBadge();
+    var saved = null;
+    try { saved = localStorage.getItem('konomi_licence_' + NODE.id); } catch(_){}
+    if (saved) {
+      var v = await verifyLicence(saved);
+      if (v.ok) {
+        KONOMI.tier = v.payload.tier;
+        KONOMI.features = v.payload.features || [];
+        KONOMI.payload = v.payload;
+        KONOMI.expires_at = v.payload.expires;
+        updateBadge();
+        try { console.log('%c◊·κ', 'color:#c2a060;font-weight:bold', NODE.name + ' · ' + v.payload.tier + ' tier active'); } catch(_){}
+        return;
+      }
+    }
+    try { console.log('%c◊', 'color:#8a8a8a;font-weight:bold', NODE.name + ' · DEAD mode · click badge to activate'); } catch(_){}
+  })();
+})();
+</script>
+<!-- /◊·κ KONOMI LICENCE -->
+
+<!-- ◊·κ KCC LEDGER v3 — Konomi Cube Coin + OnlyBrains client (drop-in, no deps) -->
+<!--
+  Ω(KCC) v18 · proof of contribution · not speculation
+    earn by: compute(R0)·signal(R1)·filter(R2)·care(R3)·build(R4)·verify(R5)·govern(R6)
+    spend: you don't · KCC accumulates · revenue finds you
+    ledger: tools themselves · local-first + OnlyBrains REST anchor
+    bloom IS identity · the shape of your contribution IS your address
+
+  OnlyBrains REST client exposed on window.kcc:
+    .reason(problem, strategy?)   → POST /api/reason       · 10 $KONO · 7 strategies
+    .oracle()                     → POST /api/fn/exec ORACLE · 5 $KONO
+    .anchor(type, params)         → POST /api/fn/exec     · varies · BSV chain anchor
+    .mintNft(id, mime, hash, meta)→ POST /api/fn/exec NFT · 100 $KONO
+    .queryTags(q?)                → GET  /api/tags        · 1 $KONO
+    .quote(model, tokens, asset)  → GET  /api/xchg/quote  · free
+    .swap(model, tokens, asset)   → POST /api/xchg/swap   · 0 $KONO (it's the swap)
+    .rates() / .tiers() / .chain() / .wallet() / .syncOnlyBrains() / .fnList()
+
+  Mesh: 4 BroadcastChannels (fall-kcc + kcc-mesh + onlybrains-mesh + ass-os-mesh)
+  Depends on: window.NODE (mesh shim)
+-->
+<script>
+(function kccShim(){
+  if (!window.NODE) return;
+  var KCC_KEY = 'kcc_ledger_' + (window.NODE.id || 'node') + '_v1';
+  var ONLYBRAINS_API = 'https://onlybrains.onrender.com';
+
+  // ── ring map · canonical (anatomy + earning verbs) ──
+  var RINGS = [
+    { i:0, v:'R0', anat:'ground',  verb:'compute', hz:'7.83',  colour:'#B42838' },
+    { i:1, v:'R1', anat:'signal',  verb:'signal',  hz:'15.66', colour:'#008CC8' },
+    { i:2, v:'R2', anat:'gate',    verb:'filter',  hz:'23.49', colour:'#DCA030' },
+    { i:3, v:'R3', anat:'heart',   verb:'care',    hz:'31.32', colour:'#28B450' },
+    { i:4, v:'R4', anat:'voice',   verb:'build',   hz:'39.15', colour:'#5078DC' },
+    { i:5, v:'R5', anat:'mirror',  verb:'verify',  hz:'46.98', colour:'#8C50C8' },
+    { i:6, v:'R6', anat:'watcher', verb:'govern',  hz:'54.81', colour:'#787878' }
+  ];
+
+  function getKccKey(){
+    try {
+      var k = localStorage.getItem('kcc-key');
+      if (!k) {
+        k = 'kcc-' + Array.from(crypto.getRandomValues(new Uint8Array(4)))
+          .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+        localStorage.setItem('kcc-key', k);
+      }
+      return k;
+    } catch(_){ return 'kcc-anon'; }
+  }
+  var KEY = getKccKey();
+
+  var LEDGER = { events:[], head:null, last_export:null, ob_balance:null, ob_last_sync:null, anchors:[] };
+  try {
+    var raw = localStorage.getItem(KCC_KEY);
+    if (raw) LEDGER = Object.assign(LEDGER, JSON.parse(raw));
+  } catch(_){}
+  function persist(){ try { localStorage.setItem(KCC_KEY, JSON.stringify(LEDGER)); } catch(_){} }
+
+  function canon(o){
+    if (o===null||typeof o!=='object') return JSON.stringify(o);
+    if (Array.isArray(o)) return '['+o.map(canon).join(',')+']';
+    var k=Object.keys(o).sort();
+    return '{'+k.map(function(x){return JSON.stringify(x)+':'+canon(o[x]);}).join(',')+'}';
+  }
+  function fnv1a(str){
+    var h = 2166136261 >>> 0;
+    for (var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0; }
+    return ('00000000'+h.toString(16)).slice(-8);
+  }
+
+  function emit(action, ringId, weight, meta){
+    var ring = typeof ringId === 'number' ? ringId : (RINGS.findIndex(function(r){ return r.verb===ringId || r.anat===ringId || r.v===ringId; }));
+    if (ring < 0 || ring > 6) ring = 0;
+    var ev = {
+      v: 1,
+      tool: window.NODE.id,
+      tool_prime: window.NODE.prime,
+      action: String(action || 'event'),
+      ring: ring,
+      weight: typeof weight === 'number' ? weight : 1,
+      t: Date.now(),
+      prev: LEDGER.head || null,
+      meta: meta || null
+    };
+    ev.h = fnv1a(canon(ev) + (LEDGER.head || ''));
+    LEDGER.events.push(ev);
+    LEDGER.head = ev.h;
+    persist();
+    if (window.kccChannels) {
+      window.kccChannels.forEach(function(ch){
+        try { ch.postMessage({ source: NODE.id, type:'kcc:event', from:NODE.id, prime:NODE.prime, ts:Date.now(), ev:ev }); } catch(_){}
+      });
+    }
+    updateBadge();
+    return ev;
+  }
+
+  function bloom(){
+    var b = [0,0,0,0,0,0,0];
+    LEDGER.events.forEach(function(ev){ b[ev.ring] = (b[ev.ring] || 0) + (ev.weight || 1); });
+    return b;
+  }
+  function shape(){
+    var b = bloom();
+    var sum = b.reduce(function(a,x){ return a+x; }, 0);
+    var peak = b.indexOf(Math.max.apply(null, b));
+    var name = sum === 0 ? 'unbloomed' : RINGS[peak].verb;
+    return { vec:b, sum:sum, peak:peak, peakRing:RINGS[peak], shape:name };
+  }
+
+  function exportProof(opts){
+    opts = opts || {};
+    var payload = {
+      v: 1, tool: NODE.id, tool_prime: NODE.prime, tool_name: NODE.name,
+      issued: new Date().toISOString(),
+      event_count: LEDGER.events.length, head: LEDGER.head,
+      bloom: bloom(), shape: shape(), kcc_key: KEY,
+      onlybrains_balance: LEDGER.ob_balance,
+      anchors_count: (LEDGER.anchors || []).length
+    };
+    if (opts.includeEvents) payload.events = LEDGER.events;
+    if (opts.includeAnchors) payload.anchors = LEDGER.anchors;
+    LEDGER.last_export = Date.now();
+    persist();
+    return payload;
+  }
+
+  // ── OnlyBrains REST client ────────────────────
+  function _withTimeout(promise, ms) {
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ ctrl.abort(); }, ms || 8000);
+    return { ctrl: ctrl, done: function(){ clearTimeout(t); } };
+  }
+  function _get(path, ms) {
+    var x = _withTimeout(null, ms);
+    return fetch(ONLYBRAINS_API + path + (path.indexOf('?')>=0?'&':'?') + 'key=' + encodeURIComponent(KEY), { signal: x.ctrl.signal })
+      .then(function(r){ x.done(); return r.json(); })
+      .catch(function(e){ x.done(); return { error: e.name === 'AbortError' ? 'timeout' : (e.message || 'fetch failed') }; });
+  }
+  function _post(path, body, ms) {
+    var x = _withTimeout(null, ms);
+    return fetch(ONLYBRAINS_API + path + (path.indexOf('?')>=0?'&':'?') + 'key=' + encodeURIComponent(KEY), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.assign({ key: KEY }, body || {})),
+      signal: x.ctrl.signal
+    }).then(function(r){ x.done(); return r.json(); })
+      .catch(function(e){ x.done(); return { error: e.name === 'AbortError' ? 'timeout' : (e.message || 'fetch failed') }; });
+  }
+
+  // Wallet sync · fire-and-forget · short timeout
+  function syncOnlyBrains(){
+    return _get('/api/wallet', 4500).then(function(w){
+      if (w && typeof w.balance !== 'undefined') {
+        LEDGER.ob_balance = { balance: w.balance, mined: w.mined, calls: w.calls };
+        LEDGER.ob_last_sync = Date.now();
+        persist();
+        updateBadge();
+      }
+      return w;
+    });
+  }
+
+  // 7-strategy structured reasoning · 10 $KONO each
+  function reason(problem, strategy) {
+    if (!problem) return Promise.resolve({ error: 'problem required' });
+    var p = _post('/api/reason', { problem: problem, strategy: strategy || 'CoT' }, 45000);
+    emit('ob:reason:' + (strategy || 'CoT'), 5, 1.5, { problem: String(problem).slice(0, 80) });
+    return p.then(function(r){
+      if (r && !r.error) {
+        LEDGER.anchors = LEDGER.anchors || [];
+        LEDGER.anchors.push({ kind:'reason', strategy: strategy || 'CoT', at: Date.now(), result: r });
+        if (LEDGER.anchors.length > 50) LEDGER.anchors = LEDGER.anchors.slice(-50);
+        persist();
+        // refresh wallet to reflect new cost
+        setTimeout(syncOnlyBrains, 800);
+      }
+      return r;
+    });
+  }
+
+  // Generic BSV chain anchor via /api/fn/exec
+  function anchor(type, params) {
+    if (!type) return Promise.resolve({ error: 'type required' });
+    var p = _post('/api/fn/exec', { type: String(type).toUpperCase(), params: params || {} }, 30000);
+    var ring = type === 'STATE' || type === 'TRADE' ? 6 : type === 'ALARM' ? 2 : type === 'KPI' ? 5 : 4;
+    emit('ob:anchor:' + String(type).toLowerCase(), ring, 2, { type: type });
+    return p.then(function(r){
+      if (r && !r.error) {
+        LEDGER.anchors = LEDGER.anchors || [];
+        LEDGER.anchors.push({ kind:'anchor', type: type, at: Date.now(), params: params, result: r });
+        if (LEDGER.anchors.length > 50) LEDGER.anchors = LEDGER.anchors.slice(-50);
+        persist();
+        setTimeout(syncOnlyBrains, 800);
+      }
+      return r;
+    });
+  }
+
+  // Convenience: price oracle snapshot · 5 $KONO
+  function oracle(opts) {
+    var defaults = { BTC: true, BSV: true, ETH: true, SOL: true };
+    return anchor('ORACLE', Object.assign(defaults, opts || {}));
+  }
+
+  // Convenience: mint a 4D tesseract NFT · 100 $KONO
+  function mintNft(id, mime, hash, meta) {
+    return anchor('NFT', {
+      id: id || ('nft-' + NODE.id + '-' + Date.now()),
+      mime: mime || 'application/json',
+      hash: hash || fnv1a(canon(meta || {})),
+      meta: meta || ('Forged by ' + NODE.name + ' · prime ' + NODE.prime)
+    });
+  }
+
+  // Quote / swap / rates / tiers / chain / fnList / queryTags
+  function quote(model, tokens, asset) {
+    return _get('/api/xchg/quote?model=' + encodeURIComponent(model || 'anthropic') + '&tokens=' + (tokens || 1000) + '&asset=' + (asset || 'reason'), 8000);
+  }
+  function swap(model, tokens, asset) {
+    return _post('/api/xchg/swap', { model: model || 'anthropic', tokens: tokens || 1000, asset: asset || 'reason' }, 12000)
+      .then(function(r){ if (r && !r.error) setTimeout(syncOnlyBrains, 800); return r; });
+  }
+  function rates() { return _get('/api/xchg/rates', 8000); }
+  function tiers() { return _get('/api/tiers', 8000); }
+  function chain() { return _get('/api/chain', 8000); }
+  function fnList() { return _get('/api/fn/list', 8000); }
+  function wallet() { return _get('/api/wallet', 8000); }
+  function queryTags(q) { return _get('/api/tags' + (q ? '?q=' + encodeURIComponent(q) : ''), 10000); }
+
+  // ── Floating badge ───────────────────────────
+  var bloomBadge = null;
+  function injectBadge(){
+    if (document.getElementById('kcc-badge')) return;
+    var el = document.createElement('div');
+    el.id = 'kcc-badge';
+    el.style.cssText = 'position:fixed;bottom:12px;left:120px;background:rgba(0,0,0,.65);color:#dbe1ea;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px';
+    el.title = 'KCC ledger · OnlyBrains-linked';
+    el.onclick = function(){ showLedger(); };
+    document.body.appendChild(el);
+    bloomBadge = el;
+    updateBadge();
+  }
+  function updateBadge(){
+    if (!bloomBadge) return;
+    var b = bloom();
+    var sum = b.reduce(function(a,x){ return a+x; }, 0);
+    var sparks = b.map(function(v, i){
+      var sz = Math.min(11, 2 + Math.round(v/2));
+      return '<span style="display:inline-block;width:3px;height:'+sz+'px;background:'+RINGS[i].colour+';margin:0 1px;border-radius:1px;vertical-align:middle"></span>';
+    }).join('');
+    var ob = (LEDGER.ob_balance && LEDGER.ob_balance.balance !== undefined)
+      ? ' · <span style="color:#d4af37">$KONO ' + LEDGER.ob_balance.balance + '</span>'
+      : '';
+    bloomBadge.innerHTML = '<span style="opacity:.7">KCC</span> '+sparks+' <span style="opacity:.85">'+sum+'</span>'+ob;
+  }
+
+  // ── Ledger modal with OnlyBrains actions ────
+  function showLedger(){
+    var b = bloom();
+    var sh = shape();
+    var rows = RINGS.map(function(r, i){
+      var v = b[i];
+      var pct = sh.sum ? Math.round(v/sh.sum*100) : 0;
+      return '<tr><td style="color:'+r.colour+';padding:4px 0;font-weight:600">'+r.v+'</td><td>'+r.anat+'</td><td style="color:#8a8a8a">'+r.verb+'</td><td>'+r.hz+' Hz</td><td style="text-align:right;font-weight:700">'+v+'</td><td style="color:#8a8a8a">'+pct+'%</td></tr>';
+    }).join('');
+    var recent = LEDGER.events.slice(-6).reverse().map(function(ev){
+      var d = new Date(ev.t).toLocaleString();
+      return '<div style="font-size:11px;color:#a8b0bc;padding:2px 0">'+d+' · <span style="color:'+RINGS[ev.ring].colour+';font-weight:600">'+RINGS[ev.ring].v+'</span> · '+ev.action+(ev.weight!==1?' ×'+ev.weight:'')+'</div>';
+    }).join('') || '<div style="color:#8a8a8a;font-size:12px;padding:6px 0">no events yet</div>';
+    var anchorsHtml = (LEDGER.anchors || []).slice(-5).reverse().map(function(a){
+      var d = new Date(a.at).toLocaleString();
+      var label = a.kind === 'reason' ? ('reason · ' + a.strategy) : (a.kind + ' · ' + a.type);
+      return '<div style="font-size:10px;color:#a8b0bc;padding:2px 0"><span style="color:#d4af37">'+d+'</span> · '+label+'</div>';
+    }).join('') || '<div style="color:#8a8a8a;font-size:11px;padding:4px 0">no OnlyBrains calls yet</div>';
+    var bal = LEDGER.ob_balance ? LEDGER.ob_balance.balance : '—';
+    var obSection = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:8px;padding:10px;margin:10px 0;font-size:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="color:#d4af37;font-weight:700">$KONO ' + bal + '</div><div style="color:#8a8a8a;font-size:10px">key <code>'+KEY+'</code></div></div><button id="kcc-sync" style="background:transparent;color:#d4af37;border:1px solid #d4af37;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px">sync</button></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"><button data-act="reason"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="10 $KONO">🧠 reason</button><button data-act="oracle"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="5 $KONO">🔮 oracle</button><button data-act="anchor"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="varies">⚓ anchor</button><button data-act="nft"     style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="100 $KONO">🎴 mint NFT</button><button data-act="rates"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">📊 rates</button><button data-act="quote"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">💱 quote</button><button data-act="chain"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">⛓️ chain</button><button data-act="tags"    style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="1 $KONO">🏷️ tags</button></div><div id="kcc-ob-result" style="margin-top:8px;font-size:10px;color:#8a8a8a;max-height:120px;overflow:auto;font-family:monospace;display:none;background:#06080c;border:1px solid #1f2937;border-radius:4px;padding:6px"></div></div>';
+    var modal = document.createElement('div');
+    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
+    modal.innerHTML='<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:22px;max-width:620px;width:100%;color:#dbe1ea;max-height:90vh;overflow:auto"><h3 style="margin:0 0 4px;color:#e6e8ee">◊·κ KCC Ledger · OnlyBrains</h3><p style="margin:0 0 10px;font-size:12px;color:#8a8a8a">'+window.NODE.name+' · prime '+window.NODE.prime+' · shape: '+sh.shape+' · '+sh.sum+' events</p>'+obSection+'<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px"><thead><tr style="border-bottom:1px solid #2a2f3a"><th style="text-align:left;padding:6px 0">ring</th><th style="text-align:left">anat</th><th style="text-align:left">verb</th><th style="text-align:left">Hz</th><th style="text-align:right">n</th><th>%</th></tr></thead><tbody>'+rows+'</tbody></table><h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 4px">recent events</h4>'+recent+'<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 4px">recent OnlyBrains calls</h4>'+anchorsHtml+'<div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap"><button id="kcc-export" style="background:#5b8def;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">export proof</button><button id="kcc-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">close</button><span style="margin-left:auto;align-self:center;font-size:11px;color:#8a8a8a">head: <code>'+(LEDGER.head||'∅')+'</code></span></div></div>';
+    document.body.appendChild(modal);
+    var resultEl = modal.querySelector('#kcc-ob-result');
+    function showResult(label, data){
+      resultEl.style.display = 'block';
+      var s = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+      if (s.length > 4000) s = s.slice(0, 4000) + '\n…';
+      resultEl.textContent = '> ' + label + '\n' + s;
+    }
+    modal.querySelector('#kcc-close').onclick = function(){ modal.remove(); };
+    modal.querySelector('#kcc-sync').onclick = function(){
+      showResult('syncing wallet…', '');
+      syncOnlyBrains().then(function(w){ showResult('wallet', w); modal.remove(); showLedger(); });
+    };
+    modal.querySelector('#kcc-export').onclick = function(){
+      var p = exportProof({ includeEvents:true, includeAnchors:true });
+      var blob = new Blob([JSON.stringify(p, null, 2)], { type:'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = NODE.id + '-kcc-proof-' + Date.now() + '.json'; a.click();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    };
+    modal.querySelectorAll('button[data-act]').forEach(function(btn){
+      btn.onclick = function(){
+        var act = btn.getAttribute('data-act');
+        if (act === 'reason') {
+          var problem = prompt('What problem? (10 $KONO)');
+          if (!problem) return;
+          var strat = prompt('Strategy? (CoT / ToT / GoT / BoT / SelfAsk / ReAct / Reflexion)', 'CoT');
+          showResult('reason: ' + strat, 'thinking…');
+          reason(problem, strat).then(function(r){ showResult('reason · ' + strat, r); });
+        } else if (act === 'oracle') {
+          showResult('oracle (5 $KONO)', 'fetching…');
+          oracle().then(function(r){ showResult('oracle', r); });
+        } else if (act === 'anchor') {
+          var type = prompt('Anchor type? (STATE / KPI / ALARM / TRADE / ASSET / SVG)', 'STATE');
+          if (!type) return;
+          var paramsStr = prompt('Params JSON (e.g. {"equip":"X","from":"idle","to":"run","mode":"auto"})', '{}');
+          var params; try { params = JSON.parse(paramsStr || '{}'); } catch(e){ alert('invalid JSON'); return; }
+          showResult('anchor · ' + type, 'anchoring to BSV…');
+          anchor(type, params).then(function(r){ showResult('anchor · ' + type, r); });
+        } else if (act === 'nft') {
+          var meta = prompt('NFT meta (100 $KONO)', NODE.name + ' · prime ' + NODE.prime);
+          if (!meta) return;
+          showResult('mint NFT', 'minting…');
+          mintNft(null, null, null, meta).then(function(r){ showResult('NFT minted', r); });
+        } else if (act === 'rates') {
+          showResult('rates', 'fetching…');
+          rates().then(function(r){ showResult('rates', r); });
+        } else if (act === 'quote') {
+          showResult('quote · anthropic 10k → reason', 'fetching…');
+          quote('anthropic', 10000, 'reason').then(function(r){ showResult('quote', r); });
+        } else if (act === 'chain') {
+          showResult('chain', 'fetching…');
+          chain().then(function(r){ showResult('chain', r); });
+        } else if (act === 'tags') {
+          showResult('tags', 'fetching…');
+          queryTags().then(function(r){ showResult('tags', r); });
+        }
+      };
+    });
+    modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
+  }
+
+  // ── 4-channel mesh interop ──
+  var CHANNEL_NAMES = ['fall-kcc', 'kcc-mesh', 'onlybrains-mesh', 'ass-os-mesh'];
+  window.kccChannels = [];
+  CHANNEL_NAMES.forEach(function(name){
+    try {
+      var ch = new BroadcastChannel(name);
+      window.kccChannels.push(ch);
+      ch.onmessage = function(e){
+        var m = e.data;
+        if (!m || m.from === NODE.id || m.source === NODE.id) return;
+        if (window.KCC_LISTEN && (m.type === 'kcc:event')) {
+          emit('observed:' + (m.from || m.source || 'peer'), 1, 0.1, { ev_h: m.ev && m.ev.h, channel: name });
+        }
+      };
+    } catch(_){}
+  });
+  if (window.kccChannels.length > 0) window.kccChannel = window.kccChannels[0];
+
+  // ── Quarterly bloom report (formal cognitive contribution statement) ──
+  function exportBloomReport(opts){
+    opts = opts || {};
+    var quarterStart = opts.since || (function(){
+      var d = new Date(); var q = Math.floor(d.getMonth() / 3);
+      return new Date(d.getFullYear(), q * 3, 1).getTime();
+    })();
+    var quarterEnd = opts.until || Date.now();
+    var qEvents = LEDGER.events.filter(function(e){ return e.t >= quarterStart && e.t <= quarterEnd; });
+    var qBloom = [0,0,0,0,0,0,0];
+    var topActions = {};
+    var anchoredCount = 0;
+    qEvents.forEach(function(ev){
+      qBloom[ev.ring] = (qBloom[ev.ring] || 0) + (ev.weight || 1);
+      topActions[ev.action] = (topActions[ev.action] || 0) + (ev.weight || 1);
+    });
+    (LEDGER.anchors || []).forEach(function(a){ if (a.at >= quarterStart && a.at <= quarterEnd) anchoredCount++; });
+    var totalEvents = qEvents.length;
+    var totalContribution = qBloom.reduce(function(a,x){ return a+x; }, 0);
+    var peakIdx = qBloom.indexOf(Math.max.apply(null, qBloom));
+    var shapeName = totalContribution === 0 ? 'unbloomed' : RINGS[peakIdx].verb;
+    var primesProduct = (function(){
+      var primes = [2,3,5,7,11,13,17];
+      var prod = 1n;
+      for (var i = 0; i < 7; i++) for (var j = 0; j < Math.floor(qBloom[i]); j++) prod *= BigInt(primes[i]);
+      return prod.toString();
+    })();
+    var startDate = new Date(quarterStart).toISOString().slice(0,10);
+    var endDate = new Date(quarterEnd).toISOString().slice(0,10);
+    var topList = Object.entries(topActions).sort(function(a,b){ return b[1]-a[1]; }).slice(0, 10);
+
+    var format = opts.format || 'markdown';
+    if (format === 'json') {
+      var payload = {
+        v: 1, type: 'bloom_quarterly_report',
+        tool: NODE.id, tool_name: NODE.name, tool_prime: NODE.prime,
+        period: { from: startDate, to: endDate, ms: quarterEnd - quarterStart },
+        bloom_vec: qBloom, bloom_sum: totalContribution, bloom_shape: shapeName,
+        peak_ring: RINGS[peakIdx],
+        prime_product: primesProduct,
+        events_total: totalEvents,
+        anchors_total: anchoredCount,
+        top_actions: topList,
+        kcc_key: KEY,
+        onlybrains_balance: LEDGER.ob_balance,
+        issued_at: new Date().toISOString()
+      };
+      return payload;
+    }
+
+    // Markdown report
+    var lines = [];
+    lines.push('# ◊·κ Quarterly Bloom Report');
+    lines.push('');
+    lines.push('**Tool:** ' + NODE.name + ' · prime ' + NODE.prime + ' · `' + NODE.id + '`');
+    lines.push('**Period:** ' + startDate + ' → ' + endDate);
+    lines.push('**Issued:** ' + new Date().toISOString());
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+    lines.push('## Headline');
+    lines.push('');
+    lines.push('- **Total events:** ' + totalEvents);
+    lines.push('- **Contribution weight:** ' + totalContribution);
+    lines.push('- **Bloom shape:** ' + shapeName + ' (peak in ' + RINGS[peakIdx].v + ' · ' + RINGS[peakIdx].anat + ')');
+    lines.push('- **BSV anchors this period:** ' + anchoredCount);
+    if (LEDGER.ob_balance) {
+      lines.push('- **$KONO balance:** ' + LEDGER.ob_balance.balance);
+    }
+    lines.push('');
+    lines.push('## Bloom signature');
+    lines.push('');
+    lines.push('```');
+    lines.push('Ring   Anatomy   Earning verb   Count   %');
+    lines.push('────   ───────   ────────────   ─────   ────');
+    RINGS.forEach(function(r, i){
+      var n = qBloom[i];
+      var pct = totalContribution > 0 ? (n / totalContribution * 100).toFixed(1) + '%' : '—';
+      lines.push(r.v + '    ' + r.anat.padEnd(9) + r.verb.padEnd(14) + ' ' + String(n).padStart(5) + '   ' + pct);
+    });
+    lines.push('```');
+    lines.push('');
+    lines.push('## Bloom prime-product (identity)');
+    lines.push('');
+    lines.push('`' + primesProduct + '`');
+    lines.push('');
+    lines.push('_This integer is your tool\'s unique cognitive contribution signature for the period._');
+    lines.push('');
+    lines.push('## Top 10 actions');
+    lines.push('');
+    topList.forEach(function(t){ lines.push('- `' + t[0] + '` × ' + t[1]); });
+    lines.push('');
+    lines.push('## Verification');
+    lines.push('');
+    lines.push('- KCC key: `' + KEY + '`');
+    lines.push('- Ledger head: `' + (LEDGER.head || '∅') + '`');
+    lines.push('- Anchors written to BSV: ' + anchoredCount);
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+    lines.push('_Generated by KCC shim v3 · Ω(KCC) v18 · part of the Fall* estate._');
+    return lines.join('\n');
+  }
+
+  // ── public API ────────────────────────────────
+  window.kcc = {
+    emit: emit, bloom: bloom, shape: shape, exportProof: exportProof, rings: RINGS,
+    ledger: function(){ return { events: LEDGER.events.slice(), head: LEDGER.head, anchors: (LEDGER.anchors||[]).slice() }; },
+    clear: function(){ if (confirm('Clear KCC ledger for ' + NODE.id + '? Cannot undo.')) { LEDGER = { events:[], head:null, last_export:null, ob_balance:null, ob_last_sync:null, anchors:[] }; persist(); updateBadge(); } },
+    showLedger: showLedger,
+    kccKey: function(){ return KEY; },
+    onlybrains: function(){ return LEDGER.ob_balance; },
+    exportBloomReport: exportBloomReport,
+    // OnlyBrains REST client
+    syncOnlyBrains: syncOnlyBrains,
+    reason: reason, anchor: anchor, oracle: oracle, mintNft: mintNft,
+    queryTags: queryTags, quote: quote, swap: swap,
+    rates: rates, tiers: tiers, chain: chain, fnList: fnList, wallet: wallet
+  };
+
+  // ── boot ──────────────────────────────────────
+  (async function(){
+    if (document.readyState === 'loading') {
+      await new Promise(function(r){ document.addEventListener('DOMContentLoaded', r, { once:true }); });
+    }
+    injectBadge();
+    var todayKey = 'kcc_open_' + new Date().toISOString().slice(0,10);
+    if (!sessionStorage.getItem(todayKey)) { sessionStorage.setItem(todayKey, '1'); emit('app:open', 0, 1); }
+    var lastSync = LEDGER.ob_last_sync || 0;
+    if (Date.now() - lastSync > 3600 * 1000) syncOnlyBrains();
+    try { console.log('%c◊·κ KCC v3', 'color:#c2a060;font-weight:bold',
+      NODE.name + ' · ' + LEDGER.events.length + ' events · shape: ' + shape().shape + ' · key: ' + KEY); } catch(_){}
+  })();
+})();
+</script>
+<!-- /◊·κ KCC LEDGER -->
+
+<!-- ◊·κ LLM CASCADE — T0→T4 sovereign fallback (drop-in, no deps except optional WebLLM ESM)
+  T0  · deterministic / template fallback (always works, never fails)
+  T1  · user's own API key (Anthropic / OpenAI / Google · stored in localStorage)
+  T2  · same-origin mesh peer (BroadcastChannel('fallmesh') · ask other tabs)
+  T3  · OnlyBrains /api/reason (paid via $KONO · uses window.kcc.reason)
+  T4  · WebLLM in-browser (Llama-3.2-3B by default · ~1.7GB one-time download · runs offline)
+
+  Public API:
+    window.llm.ask(prompt, opts)         → { provider, tier, text, ms } | { error }
+    window.llm.providers()               → { anthropic:bool, openai:bool, google:bool, mesh:bool, onlybrains:bool, webllm:'ready'|'downloading'|'not-loaded' }
+    window.llm.setKey(provider, key)     → stores key
+    window.llm.preloadWebLLM(modelId?)   → kicks off WebLLM download
+    window.llm.tier()                    → 'T1' / 'T2' / 'T3' / 'T4' / 'T0' — current default tier
+    window.llm.config                    → { preferred: ['anthropic','onlybrains','webllm','t0'] }
+-->
+<script>
+(function llmCascade(){
+  if (window.llm) return;
+
+  var STORE_KEY = 'llm_cascade_v1';
+  var STATE = {
+    keys: {},                  // { anthropic: 'sk-ant-...', openai: '...', google: '...' }
+    webllm: { status: 'not-loaded', model: null, progress: 0, message: '' },
+    // T1 FallCore (local proxy) → T1 user keys → T3 OnlyBrains → T4 WebLLM → T2 mesh → T0 fallback
+    preferred: ['fallcore', 'anthropic', 'openai', 'google', 'onlybrains', 'webllm', 'mesh', 't0'],
+    fallcore_endpoint: '',   // e.g. 'http://localhost:11434' or 'https://ai.acme.internal'
+    log: []                    // last 50 calls: { t, provider, tier, ms, ok, prompt_chars }
+  };
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw) STATE = Object.assign(STATE, JSON.parse(raw));
+  } catch(_){}
+  function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); } catch(_){} }
+
+  function trace(provider, tier, ms, ok, prompt) {
+    STATE.log.unshift({ t: Date.now(), provider: provider, tier: tier, ms: ms, ok: !!ok, prompt_chars: (prompt || '').length });
+    if (STATE.log.length > 50) STATE.log.length = 50;
+    persist();
+    if (window.kcc) {
+      // R5 verify when AI returns useful output; R0 compute on every call
+      window.kcc.emit('llm:' + provider + (ok ? '' : ':fail'), ok ? 5 : 0, ok ? 1 : 0.2, { tier: tier, ms: ms });
+    }
+  }
+
+  function withTimeout(promise, ms, label) {
+    return Promise.race([
+      promise,
+      new Promise(function(_, rej){ setTimeout(function(){ rej(new Error((label||'op') + ' timeout')); }, ms || 30000); })
+    ]);
+  }
+
+  // ── T1 providers — direct from browser (CORS-allowed endpoints) ──
+  var T1 = {
+    // FallCore: company's on-prem brain · same API shape as Anthropic
+    // If configured, this tries FIRST · transparent fallthrough if low confidence
+    fallcore: {
+      tier: 'T1',
+      label: 'FallCore (on-prem)',
+      available: function(){ return !!STATE.fallcore_endpoint; },
+      hasKey: function(){ return !!STATE.fallcore_endpoint; },
+      ask: async function(prompt, opts){
+        if (!STATE.fallcore_endpoint) throw new Error('no fallcore endpoint');
+        var url = STATE.fallcore_endpoint.replace(/\/$/, '') + '/v1/messages';
+        var r = await withTimeout(fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': STATE.keys.anthropic || 'fallcore-cascade',
+            'anthropic-version': '2023-06-01',
+            'x-fallcore-tool': (window.NODE ? window.NODE.id : 'anon')
+          },
+          body: JSON.stringify({
+            model: opts.model || 'claude-sonnet-4-20250514',  // FallCore picks local first regardless
+            max_tokens: opts.max_tokens || 2048,
+            system: opts.system || 'You are a helpful assistant for ' + (window.NODE ? window.NODE.name : 'this app') + '. Reply concisely.',
+            messages: [{ role: 'user', content: prompt }],
+            fallcore_options: opts.fallcore_options || {}
+          })
+        }), 60000, 'fallcore');
+        if (!r.ok) throw new Error('fallcore ' + r.status);
+        var j = await r.json();
+        return j.content[0].text;
+      }
+    },
+    anthropic: {
+      tier: 'T1',
+      label: 'Anthropic',
+      hasKey: function(){ return !!STATE.keys.anthropic; },
+      ask: async function(prompt, opts){
+        if (!STATE.keys.anthropic) throw new Error('no anthropic key');
+        var r = await withTimeout(fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': STATE.keys.anthropic,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: opts.model || 'claude-sonnet-4-20250514',
+            max_tokens: opts.max_tokens || 2048,
+            system: opts.system || 'You are a helpful assistant for ' + (window.NODE ? window.NODE.name : 'this app') + '. Reply concisely.',
+            messages: [{ role: 'user', content: prompt }]
+          })
+        }), 45000, 'anthropic');
+        if (!r.ok) throw new Error('anthropic ' + r.status);
+        var j = await r.json();
+        return j.content[0].text;
+      }
+    },
+    openai: {
+      tier: 'T1',
+      label: 'OpenAI',
+      hasKey: function(){ return !!STATE.keys.openai; },
+      ask: async function(prompt, opts){
+        if (!STATE.keys.openai) throw new Error('no openai key');
+        var r = await withTimeout(fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + STATE.keys.openai },
+          body: JSON.stringify({
+            model: opts.model || 'gpt-4o-mini',
+            max_tokens: opts.max_tokens || 2048,
+            messages: [
+              { role: 'system', content: opts.system || 'You are a helpful assistant. Reply concisely.' },
+              { role: 'user', content: prompt }
+            ]
+          })
+        }), 45000, 'openai');
+        if (!r.ok) throw new Error('openai ' + r.status);
+        var j = await r.json();
+        return j.choices[0].message.content;
+      }
+    },
+    google: {
+      tier: 'T1',
+      label: 'Google',
+      hasKey: function(){ return !!STATE.keys.google; },
+      ask: async function(prompt, opts){
+        if (!STATE.keys.google) throw new Error('no google key');
+        var model = opts.model || 'gemini-2.0-flash';
+        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(STATE.keys.google);
+        var r = await withTimeout(fetch(url, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role:'user', parts: [{ text: (opts.system ? opts.system + '\n\n' : '') + prompt }] }],
+            generationConfig: { maxOutputTokens: opts.max_tokens || 2048 }
+          })
+        }), 45000, 'google');
+        if (!r.ok) throw new Error('google ' + r.status);
+        var j = await r.json();
+        return j.candidates[0].content.parts[0].text;
+      }
+    }
+  };
+
+  // ── T2 mesh peer (ask another tab) ──
+  var T2 = {
+    mesh: {
+      tier: 'T2',
+      label: 'Mesh peer',
+      available: function(){ try { return !!window.BroadcastChannel; } catch(_){ return false; } },
+      ask: function(prompt, opts){
+        return new Promise(function(resolve, reject){
+          if (!window.BroadcastChannel) return reject(new Error('no BroadcastChannel'));
+          var ch;
+          try { ch = new BroadcastChannel('fallmesh'); }
+          catch(e){ return reject(new Error('mesh open failed')); }
+          var reqId = 'llmreq_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+          var handler = function(e){
+            var m = e.data;
+            if (m && m.type === 'llm:response' && m.req === reqId) {
+              ch.removeEventListener('message', handler);
+              ch.close();
+              if (m.text) resolve(m.text);
+              else reject(new Error(m.error || 'mesh empty'));
+            }
+          };
+          ch.addEventListener('message', handler);
+          try {
+            ch.postMessage({
+              type: 'llm:request', req: reqId,
+              from: window.NODE ? window.NODE.id : 'anon',
+              prompt: prompt, opts: opts || {}
+            });
+          } catch(e){ ch.close(); return reject(e); }
+          setTimeout(function(){
+            try { ch.removeEventListener('message', handler); ch.close(); } catch(_){}
+            reject(new Error('mesh timeout'));
+          }, opts.mesh_timeout || 2000);
+        });
+      }
+    }
+  };
+
+  // ── T3 OnlyBrains (via window.kcc) ──
+  var T3 = {
+    onlybrains: {
+      tier: 'T3',
+      label: 'OnlyBrains',
+      available: function(){ return !!(window.kcc && window.kcc.reason); },
+      ask: async function(prompt, opts){
+        if (!window.kcc || !window.kcc.reason) throw new Error('kcc not loaded');
+        var r = await withTimeout(window.kcc.reason(prompt, opts.strategy || 'CoT'), 60000, 'onlybrains');
+        if (r && r.error) throw new Error('onlybrains: ' + r.error);
+        // Shape: response varies by OnlyBrains API · normalise
+        if (typeof r === 'string') return r;
+        return r.text || r.answer || r.result || r.output || JSON.stringify(r);
+      }
+    }
+  };
+
+  // ── T4 WebLLM (in-browser, requires WebGPU) ──
+  var WEBLLM_DEFAULT_MODEL = 'Llama-3.2-3B-Instruct-q4f16_1-MLC';
+  var webllmEngine = null;
+  var webllmLoadPromise = null;
+  function hasWebGPU(){ return typeof navigator !== 'undefined' && !!navigator.gpu; }
+  async function loadWebLLM(modelId) {
+    if (webllmEngine) return webllmEngine;
+    if (webllmLoadPromise) return webllmLoadPromise;
+    if (!hasWebGPU()) throw new Error('WebGPU unavailable in this browser');
+    STATE.webllm.status = 'downloading';
+    STATE.webllm.model = modelId || WEBLLM_DEFAULT_MODEL;
+    STATE.webllm.progress = 0;
+    STATE.webllm.message = 'starting…';
+    persist();
+    updateUI();
+    webllmLoadPromise = (async function(){
+      var mod = await import('https://esm.run/@mlc-ai/web-llm');
+      var fn = mod.CreateMLCEngine || mod.createMLCEngine;
+      if (!fn) throw new Error('WebLLM API not found in module');
+      webllmEngine = await fn(STATE.webllm.model, {
+        initProgressCallback: function(p){
+          STATE.webllm.progress = p.progress || 0;
+          STATE.webllm.message = p.text || '';
+          persist();
+          updateUI();
+        }
+      });
+      STATE.webllm.status = 'ready';
+      STATE.webllm.message = 'ready';
+      persist();
+      updateUI();
+      return webllmEngine;
+    })().catch(function(e){
+      STATE.webllm.status = 'error';
+      STATE.webllm.message = e.message || String(e);
+      persist();
+      updateUI();
+      webllmLoadPromise = null;
+      throw e;
+    });
+    return webllmLoadPromise;
+  }
+  var T4 = {
+    webllm: {
+      tier: 'T4',
+      label: 'WebLLM (offline)',
+      available: function(){ return hasWebGPU(); },
+      ask: async function(prompt, opts){
+        var eng = await loadWebLLM(opts.model);
+        var r = await eng.chat.completions.create({
+          messages: [
+            { role: 'system', content: opts.system || 'You are a helpful assistant. Reply concisely.' },
+            { role: 'user', content: prompt }
+          ],
+          max_tokens: opts.max_tokens || 1024,
+          temperature: opts.temperature == null ? 0.7 : opts.temperature
+        });
+        return r.choices[0].message.content;
+      }
+    }
+  };
+
+  // ── T0 deterministic fallback (last resort, never throws) ──
+  var T0 = {
+    t0: {
+      tier: 'T0',
+      label: 'Offline fallback',
+      available: function(){ return true; },
+      ask: async function(prompt, opts){
+        if (opts.fallback) return typeof opts.fallback === 'function' ? opts.fallback(prompt) : opts.fallback;
+        return '[T0] No AI provider available. Add an API key (Settings → AI Cascade), enable WebLLM, or check internet connection. Prompt was: ' + String(prompt || '').slice(0, 200);
+      }
+    }
+  };
+
+  var ALL = Object.assign({}, T1, T2, T3, T4, T0);
+
+  // Listen for mesh peer requests — if other tabs ask us, answer using our T1 provider only
+  // (don't recurse into mesh asking mesh asking mesh)
+  try {
+    var peerCh = new BroadcastChannel('fallmesh');
+    peerCh.addEventListener('message', async function(e){
+      var m = e.data;
+      if (!m || m.type !== 'llm:request' || m.from === (window.NODE && window.NODE.id)) return;
+      // Try T1 only — don't recurse
+      for (var i = 0; i < STATE.preferred.length; i++) {
+        var p = STATE.preferred[i];
+        if (p === 'mesh' || p === 't0' || !ALL[p]) continue;
+        if (ALL[p].tier !== 'T1') continue;
+        if (ALL[p].hasKey && !ALL[p].hasKey()) continue;
+        try {
+          var text = await ALL[p].ask(m.prompt, m.opts || {});
+          peerCh.postMessage({ type: 'llm:response', req: m.req, text: text, served_by: window.NODE && window.NODE.id });
+          return;
+        } catch(_){}
+      }
+      // Couldn't help — silently ignore
+    });
+  } catch(_){}
+
+  // ── Main ask() — walks the cascade ──
+  async function ask(prompt, opts) {
+    opts = opts || {};
+    var order = opts.order || STATE.preferred;
+    var skipped = [];
+    for (var i = 0; i < order.length; i++) {
+      var name = order[i];
+      var p = ALL[name];
+      if (!p) continue;
+      if (p.available && !p.available()) { skipped.push({ name: name, reason: 'unavailable' }); continue; }
+      if (p.hasKey && !p.hasKey()) { skipped.push({ name: name, reason: 'no key' }); continue; }
+      var t0 = Date.now();
+      try {
+        var text = await p.ask(prompt, opts);
+        var ms = Date.now() - t0;
+        trace(name, p.tier, ms, true, prompt);
+        return { provider: name, tier: p.tier, label: p.label, text: text, ms: ms, skipped: skipped };
+      } catch(e) {
+        var ms2 = Date.now() - t0;
+        trace(name, p.tier, ms2, false, prompt);
+        skipped.push({ name: name, reason: e.message || String(e), ms: ms2 });
+      }
+    }
+    return { error: 'all providers failed', skipped: skipped };
+  }
+
+  function providers() {
+    return {
+      fallcore: !!STATE.fallcore_endpoint,
+      fallcore_endpoint: STATE.fallcore_endpoint,
+      anthropic: !!STATE.keys.anthropic,
+      openai: !!STATE.keys.openai,
+      google: !!STATE.keys.google,
+      mesh: !!window.BroadcastChannel,
+      onlybrains: !!(window.kcc && window.kcc.reason),
+      webllm_supported: hasWebGPU(),
+      webllm_status: STATE.webllm.status,
+      webllm_progress: STATE.webllm.progress,
+      webllm_model: STATE.webllm.model
+    };
+  }
+
+  function setKey(provider, key) {
+    STATE.keys[provider] = key;
+    persist();
+    updateUI();
+  }
+  function setFallcoreEndpoint(url) {
+    STATE.fallcore_endpoint = String(url || '').trim();
+    persist();
+    updateUI();
+  }
+
+  function currentTier() {
+    // Highest-priority tier that will ACTUALLY answer (mesh excluded since it's peer-dependent)
+    var prov = providers();
+    if (prov.fallcore) return 'T1·FallCore';
+    if (prov.anthropic || prov.openai || prov.google) return 'T1';
+    if (prov.onlybrains) return 'T3';
+    if (prov.webllm_status === 'ready') return 'T4';
+    return 'T0';
+  }
+
+  // ── Floating cascade-status badge ──
+  var badge = null;
+  function injectBadge(){
+    if (document.getElementById('llm-badge')) return;
+    var el = document.createElement('div');
+    el.id = 'llm-badge';
+    el.style.cssText = 'position:fixed;bottom:12px;left:340px;background:rgba(0,0,0,.65);color:#dbe1ea;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px';
+    el.title = 'LLM Cascade · click for status';
+    el.onclick = function(){ showCascadeUI(); };
+    document.body.appendChild(el);
+    badge = el;
+    updateUI();
+  }
+  function updateUI(){
+    if (!badge) return;
+    var tier = currentTier();
+    var colour = tier === 'T1' ? '#22c55e' : tier === 'T2' ? '#8b5cf6' : tier === 'T3' ? '#d4af37' : tier === 'T4' ? '#f59e0b' : '#8a8a8a';
+    var label = 'AI · ' + tier;
+    if (STATE.webllm.status === 'downloading') {
+      label = 'WebLLM ' + Math.round((STATE.webllm.progress || 0) * 100) + '%';
+      colour = '#f59e0b';
+    }
+    badge.innerHTML = '<span style="color:' + colour + ';font-weight:700">●</span><span>' + label + '</span>';
+  }
+
+  // ── Settings modal ──
+  function showCascadeUI(){
+    var prov = providers();
+    var tier = currentTier();
+    var fallcoreHtml = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:6px;padding:10px;margin-bottom:10px;font-size:12px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong style="color:#22c55e">⚡ FallCore (on-prem brain)</strong><span style="color:#8a8a8a;font-size:11px">' + (STATE.fallcore_endpoint ? STATE.fallcore_endpoint : 'not set') + '</span></div>' +
+      '<div style="font-size:11px;color:#a8b0bc;margin-bottom:8px">Point at your company’s on-prem brain. Cascades local-first, falls through to frontier only on low confidence. Same API as Anthropic. Self-improves over time from your reviewer corrections.</div>' +
+      '<div style="display:flex;gap:6px;align-items:center">' +
+      '<input type="text" id="llm-fallcore-url" placeholder="https://ai.acme.internal or http://localhost:11434" value="' + (STATE.fallcore_endpoint || '') + '" style="flex:1;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:5px;padding:5px 8px;font-family:monospace;font-size:11px">' +
+      '<button id="llm-fallcore-save" style="background:#22c55e;color:#000;border:none;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600">save</button>' +
+      (STATE.fallcore_endpoint ? '<button id="llm-fallcore-clear" style="background:transparent;color:#ef4444;border:1px solid #ef4444;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:11px">clear</button>' : '') +
+      '</div></div>';
+    var keysHtml = ['anthropic','openai','google'].map(function(p){
+      var has = !!STATE.keys[p];
+      var label = p[0].toUpperCase() + p.slice(1);
+      return '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px"><label style="width:90px;font-size:12px;color:#a8b0bc">' + label + '</label><input type="password" id="llm-key-' + p + '" placeholder="' + (has ? '••• key saved' : 'paste API key') + '" style="flex:1;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:5px;padding:5px 8px;font-family:monospace;font-size:11px"><button data-save="' + p + '" style="background:#5b8def;color:#fff;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px">save</button>' + (has ? '<button data-clear="' + p + '" style="background:transparent;color:#ef4444;border:1px solid #ef4444;padding:4px 8px;border-radius:5px;cursor:pointer;font-size:11px">clear</button>' : '') + '</div>';
+    }).join('');
+    var webllmStatus = STATE.webllm.status;
+    var webllmHtml = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:6px;padding:10px;margin:10px 0;font-size:12px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong style="color:#f59e0b">⚡ WebLLM (in-browser, offline-capable)</strong><span style="color:#8a8a8a;font-size:11px">' + (STATE.webllm.model || WEBLLM_DEFAULT_MODEL) + '</span></div>' +
+      '<div style="font-size:11px;color:#a8b0bc;margin-bottom:8px">Downloads a 1.7GB model once. After that all AI runs in your browser using WebGPU — no internet needed. Status: <strong style="color:' + (webllmStatus === 'ready' ? '#22c55e' : webllmStatus === 'downloading' ? '#f59e0b' : '#8a8a8a') + '">' + webllmStatus + '</strong>' + (STATE.webllm.message ? ' · ' + STATE.webllm.message : '') + '</div>' +
+      (webllmStatus === 'downloading' ? '<div style="height:6px;background:#1f2937;border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="height:100%;background:#f59e0b;width:' + Math.round((STATE.webllm.progress || 0) * 100) + '%"></div></div>' : '') +
+      '<div style="display:flex;gap:6px"><button id="llm-webllm-download" ' + (webllmStatus === 'downloading' || webllmStatus === 'ready' ? 'disabled' : '') + ' style="background:#f59e0b;color:#000;border:none;padding:6px 12px;border-radius:5px;cursor:' + (webllmStatus === 'downloading' || webllmStatus === 'ready' ? 'not-allowed;opacity:.5' : 'pointer') + ';font-size:11px;font-weight:600">' + (webllmStatus === 'ready' ? '✓ loaded' : webllmStatus === 'downloading' ? 'downloading…' : 'download model (1.7GB)') + '</button>' +
+      (hasWebGPU() ? '<span style="font-size:10px;color:#22c55e;align-self:center">✓ WebGPU supported</span>' : '<span style="font-size:10px;color:#ef4444;align-self:center">✗ WebGPU not available in this browser</span>') +
+      '</div></div>';
+    var logHtml = STATE.log.slice(0, 6).map(function(l){
+      var d = new Date(l.t).toLocaleString();
+      var ok = l.ok ? '✓' : '✗';
+      var colour = l.ok ? '#22c55e' : '#ef4444';
+      return '<div style="font-size:10px;color:#a8b0bc;padding:2px 0"><span style="color:#8a8a8a">' + d + '</span> · <span style="color:' + colour + '">' + ok + '</span> ' + l.provider + ' (' + l.tier + ') · ' + l.ms + 'ms · ' + l.prompt_chars + ' chars in</div>';
+    }).join('') || '<div style="color:#8a8a8a;font-size:11px">no calls yet</div>';
+
+    var modal = document.createElement('div');
+    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
+    modal.innerHTML='<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:22px;max-width:580px;width:100%;color:#dbe1ea;max-height:90vh;overflow:auto">' +
+      '<h3 style="margin:0 0 4px;color:#e6e8ee">◊·κ LLM Cascade</h3>' +
+      '<p style="margin:0 0 12px;font-size:12px;color:#8a8a8a">Current tier: <strong style="color:' + (tier==='T1'?'#22c55e':tier==='T2'?'#8b5cf6':tier==='T3'?'#d4af37':tier==='T4'?'#f59e0b':'#8a8a8a') + '">' + tier + '</strong> · fallback order: ' + STATE.preferred.join(' → ') + '</p>' +
+      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:8px 0 6px">T1 · FallCore (your on-prem brain)</h4>' +
+      fallcoreHtml +
+      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px">T1 · direct API keys (browser-only, never leaves device)</h4>' +
+      keysHtml +
+      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px">T4 · WebLLM offline</h4>' +
+      webllmHtml +
+      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px">recent calls</h4>' +
+      logHtml +
+      '<div style="display:flex;gap:8px;margin-top:14px"><button id="llm-test" style="background:#5b8def;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">test cascade</button><button id="llm-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">close</button></div>' +
+      '<div id="llm-test-result" style="margin-top:10px;font-size:11px;color:#a8b0bc;font-family:monospace;display:none;background:#06080c;border:1px solid #1f2937;border-radius:4px;padding:8px;max-height:200px;overflow:auto"></div>' +
+      '</div>';
+    document.body.appendChild(modal);
+    modal.querySelector('#llm-close').onclick = function(){ modal.remove(); };
+    modal.onclick = function(e){ if (e.target === modal) modal.remove(); };
+    // FallCore endpoint save/clear
+    var fcSave = modal.querySelector('#llm-fallcore-save');
+    if (fcSave) fcSave.onclick = function(){
+      var url = modal.querySelector('#llm-fallcore-url').value.trim();
+      setFallcoreEndpoint(url);
+      modal.remove(); showCascadeUI();
+    };
+    var fcClear = modal.querySelector('#llm-fallcore-clear');
+    if (fcClear) fcClear.onclick = function(){
+      setFallcoreEndpoint('');
+      modal.remove(); showCascadeUI();
+    };
+    modal.querySelectorAll('[data-save]').forEach(function(b){
+      b.onclick = function(){
+        var p = b.getAttribute('data-save');
+        var inp = modal.querySelector('#llm-key-' + p);
+        if (inp.value) { setKey(p, inp.value); modal.remove(); showCascadeUI(); }
+      };
+    });
+    modal.querySelectorAll('[data-clear]').forEach(function(b){
+      b.onclick = function(){ var p = b.getAttribute('data-clear'); delete STATE.keys[p]; persist(); updateUI(); modal.remove(); showCascadeUI(); };
+    });
+    var dl = modal.querySelector('#llm-webllm-download');
+    if (dl) dl.onclick = function(){ loadWebLLM().then(function(){ modal.remove(); showCascadeUI(); }).catch(function(e){ alert('WebLLM load failed: ' + e.message); }); };
+    var test = modal.querySelector('#llm-test');
+    test.onclick = async function(){
+      var res = modal.querySelector('#llm-test-result');
+      res.style.display = 'block';
+      res.textContent = 'testing… asking "Say OK in one word"';
+      var r = await ask('Say OK in one word.', { max_tokens: 32 });
+      res.textContent = r.error ? '✗ ' + r.error + '\nSkipped: ' + JSON.stringify(r.skipped || [], null, 2) : '✓ ' + r.provider + ' (' + r.tier + ') · ' + r.ms + 'ms\n\n' + r.text;
+    };
+  }
+
+  // Boot
+  (function boot(){
+    function ready(){
+      injectBadge();
+      try { console.log('%c◊·κ LLM cascade', 'color:#5b8def;font-weight:bold', 'current tier:', currentTier(), '· providers:', providers()); } catch(_){}
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once:true });
+    else ready();
+  })();
+
+  window.llm = {
+    ask: ask,
+    providers: providers,
+    setKey: setKey,
+    setFallcoreEndpoint: setFallcoreEndpoint,
+    preloadWebLLM: loadWebLLM,
+    tier: currentTier,
+    config: { preferred: STATE.preferred },
+    showSettings: showCascadeUI,
+    _state: STATE
+  };
+})();
+</script>
+<!-- /◊·κ LLM CASCADE -->
+<!-- ◊·κ FALL-API SHIM — inter-tool API surface · cli(cmd) layer
+  Turns every Fall* HTML into an API endpoint other tools (in other tabs)
+  can call without a server. Same-origin BroadcastChannel transport.
+
+  Per Thomas's 5-turtle stack:
+    sys(params) → cmd(sys) → cli(cmd) → api(cli) → mcp(api)
+  This is the cli(cmd) / api(cli) layer for sovereign HTMLs.
+
+  Public API:
+    window.fall_api.register(resource, handler)   — expose a resource
+    window.fall_api.list()                        — what this tool exposes
+    window.fall.call(tool, resource, params)      — call another tool's API
+    window.fall.callMany(...)                     — fan out across mesh
+    window.fall.discover()                        — list all visible Fall* tools + their APIs
+
+  Depends on: window.NODE (mesh shim) for identity + BroadcastChannel.
+-->
+<script>
+(function fallApiShim(){
+  if (!window.NODE) return;
+  if (window.fall_api) return; // already loaded
+
+  var REGISTRY = {};   // resource → handler
+  var PEERS = {};      // tool_id → { last_seen, resources, prime, name }
+  var PEER_TTL = 30000;
+
+  // Open dedicated channel for API traffic (separate from fallmesh events)
+  var channel = null;
+  try { channel = new BroadcastChannel('fall-api'); }
+  catch (_) { return; } // browser too old
+
+  function emit(msg) {
+    try { channel.postMessage(Object.assign({ from: NODE.id, prime: NODE.prime, t: Date.now() }, msg)); } catch (_){}
+  }
+
+  // ── Server side (this tool exposes resources) ──
+  window.fall_api = {
+    register: function(resource, handler, meta) {
+      if (typeof resource !== 'string' || typeof handler !== 'function') return false;
+      REGISTRY[resource] = { handler: handler, meta: meta || {} };
+      // Broadcast discovery
+      emit({ type: 'fall-api:register', resource: resource, name: NODE.name, meta: meta || {} });
+      // Track in KCC (R6 govern — exposing a public surface)
+      if (window.kcc) window.kcc.emit('api:register:' + resource, 6, 0.5);
+      return true;
+    },
+    unregister: function(resource) {
+      delete REGISTRY[resource];
+      emit({ type: 'fall-api:unregister', resource: resource });
+    },
+    list: function() {
+      return Object.keys(REGISTRY).map(function(r){
+        return { resource: r, meta: REGISTRY[r].meta };
+      });
+    }
+  };
+
+  // ── Handle incoming requests ──
+  channel.onmessage = function(e) {
+    var m = e.data;
+    if (!m || m.from === NODE.id) return;
+
+    // Track peer
+    if (m.type && m.from) {
+      PEERS[m.from] = PEERS[m.from] || { resources: {} };
+      PEERS[m.from].last_seen = Date.now();
+      PEERS[m.from].prime = m.prime;
+      PEERS[m.from].name = m.name || PEERS[m.from].name;
+    }
+
+    // Discovery broadcasts
+    if (m.type === 'fall-api:register' && m.from && m.resource) {
+      PEERS[m.from].resources[m.resource] = m.meta || {};
+      return;
+    }
+    if (m.type === 'fall-api:unregister' && m.from && m.resource) {
+      if (PEERS[m.from]) delete PEERS[m.from].resources[m.resource];
+      return;
+    }
+    if (m.type === 'fall-api:hello') {
+      // Reply with our capabilities
+      emit({
+        type: 'fall-api:announce',
+        name: NODE.name,
+        resources: Object.keys(REGISTRY).reduce(function(acc, k){ acc[k] = REGISTRY[k].meta || {}; return acc; }, {})
+      });
+      return;
+    }
+    if (m.type === 'fall-api:announce' && m.from) {
+      PEERS[m.from].resources = m.resources || {};
+      return;
+    }
+
+    // Request targeted at us
+    if (m.type === 'fall-api:request' && m.target === NODE.id) {
+      var entry = REGISTRY[m.resource];
+      if (!entry) {
+        emit({ type: 'fall-api:response', req: m.req, target: m.from, error: 'resource not found: ' + m.resource });
+        return;
+      }
+      try {
+        Promise.resolve(entry.handler(m.params || {}, { caller: m.from, callerPrime: m.callerPrime }))
+          .then(function(result){
+            emit({ type: 'fall-api:response', req: m.req, target: m.from, ok: true, result: result, resource: m.resource });
+            if (window.kcc) window.kcc.emit('api:served:' + m.resource, 4, 1, { caller: m.from });
+          })
+          .catch(function(err){
+            emit({ type: 'fall-api:response', req: m.req, target: m.from, error: err.message || String(err) });
+          });
+      } catch (e) {
+        emit({ type: 'fall-api:response', req: m.req, target: m.from, error: e.message });
+      }
+      return;
+    }
+  };
+
+  // ── Client side (this tool calls another tool's API) ──
+  window.fall = {
+    call: function(tool, resource, params, opts) {
+      opts = opts || {};
+      return new Promise(function(resolve, reject){
+        if (!channel) return reject(new Error('no BroadcastChannel'));
+        var req = 'fr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        var done = false;
+        var handler = function(e) {
+          var m = e.data;
+          if (m && m.type === 'fall-api:response' && m.req === req) {
+            done = true;
+            channel.removeEventListener('message', handler);
+            if (m.error) return reject(new Error(m.error));
+            resolve(m.result);
+          }
+        };
+        channel.addEventListener('message', handler);
+        emit({ type: 'fall-api:request', req: req, target: tool, resource: resource, params: params, callerPrime: NODE.prime });
+        if (window.kcc) window.kcc.emit('api:call:' + tool + '/' + resource, 1, 0.5);
+        setTimeout(function(){
+          if (done) return;
+          channel.removeEventListener('message', handler);
+          reject(new Error('fall.call timeout · ' + tool + '/' + resource));
+        }, opts.timeout || 4000);
+      });
+    },
+
+    // Fan out: ask all peers that expose <resource>
+    callMany: function(resource, params, opts) {
+      var promises = Object.keys(PEERS)
+        .filter(function(p){ return PEERS[p].resources && PEERS[p].resources[resource]; })
+        .map(function(p){
+          return window.fall.call(p, resource, params, opts)
+            .then(function(r){ return { tool: p, ok: true, result: r }; })
+            .catch(function(e){ return { tool: p, ok: false, error: e.message }; });
+        });
+      return Promise.all(promises);
+    },
+
+    // List currently visible peers + their resources
+    discover: function() {
+      var now = Date.now();
+      var live = {};
+      Object.keys(PEERS).forEach(function(p){
+        if (now - PEERS[p].last_seen < PEER_TTL) live[p] = PEERS[p];
+      });
+      return live;
+    },
+
+    // Ask the network "what's out there"
+    refresh: function() {
+      emit({ type: 'fall-api:hello' });
+      return new Promise(function(r){ setTimeout(r, 600); }).then(function(){ return window.fall.discover(); });
+    }
+  };
+
+  // ── Boot · say hello to the network ──
+  (function boot(){
+    function ready(){
+      setTimeout(function(){
+        emit({ type: 'fall-api:hello', name: NODE.name });
+      }, 500);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once:true });
+    else ready();
+  })();
+
+  try { console.log('%c◊·κ fall-api', 'color:#5b8def;font-weight:bold', NODE.name + ' · ready · register handlers via window.fall_api.register()'); } catch(_){}
+})();
+</script>
+<!-- /◊·κ FALL-API SHIM -->
+<!-- ◊·κ FALL-SW SHIM — Service Worker that turns sovereign HTML into an HTTP API
+  fetch('/api/&lt;tool&gt;/&lt;resource&gt;?param=...') from anywhere in this origin
+  → SW catches it → routes to whichever Fall* tab owns &lt;tool&gt; via the
+  fall-api channel → returns JSON Response.
+
+  Per Thomas's 5-turtle stack:
+    sys(params) → cmd(sys) → cli(cmd) → api(cli) → mcp(api)
+  This is the api(cli) layer · turns the cli into an HTTP-callable surface.
+
+  Browser-compatible. Requires:
+    · Service Workers (Chrome 40+, Safari 11.1+, Firefox 44+)
+    · BroadcastChannel API (already required by fall-api)
+
+  External callers (other tabs, native apps via localhost proxy, even other
+  domains via CORS) can now `fetch('https://your-host/api/gymos/members')`
+  and get a response — without any backend server.
+
+  Caveats:
+    · Same-origin only (this IS the sovereignty: no cross-origin to 3rd parties)
+    · Works only while AT LEAST ONE Fall* tab is open in the browser
+    · First request to /api/* requires SW to be installed (auto on first page load)
+-->
+<script>
+(function fallSwShim(){
+  if (!window.NODE) return;
+  if (!('serviceWorker' in navigator)) {
+    try { console.log('%c◊·κ fall-sw', 'color:#8a8a8a', 'Service Workers not available · API surface is BroadcastChannel-only (no /api/* fetch interception)'); } catch(_){}
+    return;
+  }
+  if (window._fall_sw_installed) return;
+  window._fall_sw_installed = true;
+
+  // The SW code, as a string, served via Blob URL
+  var SW_CODE = `
+// ◊·κ FallCore Service Worker · v1
+// Intercepts /api/&lt;tool&gt;/&lt;resource&gt; · routes to clients
+const VERSION = '${Date.now()}';
+const TIMEOUT = 5000;
+
+self.addEventListener('install', function(e){
+  self.skipWaiting();
+});
+self.addEventListener('activate', function(e){
+  e.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('fetch', function(event) {
+  var url = new URL(event.request.url);
+  // Only intercept same-origin /api/* paths
+  if (url.origin !== self.location.origin) return;
+  if (!url.pathname.startsWith('/api/')) return;
+
+  // Parse: /api/&lt;tool&gt;/&lt;resource&gt;
+  var parts = url.pathname.slice(5).split('/');
+  var tool = parts[0];
+  var resource = parts.slice(1).join('/');
+  if (!tool) return;
+
+  // Collect params from query + body
+  event.respondWith((async function(){
+    var params = {};
+    url.searchParams.forEach(function(v, k){ params[k] = v; });
+    if (event.request.method === 'POST') {
+      try {
+        var body = await event.request.json();
+        Object.assign(params, body || {});
+      } catch(_){}
+    }
+    // Ask any client tab to serve this
+    var clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    if (!clientList.length) {
+      return new Response(JSON.stringify({ error: 'no Fall* tab open · open the tool first' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    var req = 'sw_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    var channel = new MessageChannel();
+    var responsePromise = new Promise(function(resolve, reject){
+      var t = setTimeout(function(){ reject(new Error('sw timeout')); }, TIMEOUT);
+      channel.port1.onmessage = function(e){
+        clearTimeout(t);
+        if (e.data && e.data.error) reject(new Error(e.data.error));
+        else resolve(e.data && e.data.result);
+      };
+    });
+    // Broadcast to all clients; the one that owns the tool responds
+    clientList.forEach(function(c){
+      try {
+        c.postMessage({ type: 'sw:api-request', req: req, tool: tool, resource: resource, params: params }, [channel.port2]);
+      } catch(_){}
+    });
+    try {
+      var result = await responsePromise;
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'x-fallcore-sw': VERSION, 'Access-Control-Allow-Origin': '*' }
+      });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: e.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+  })());
+});
+`;
+
+  // Each page listens for SW messages and forwards via fall-api
+  navigator.serviceWorker.addEventListener('message', function(e) {
+    var m = e.data;
+    if (!m || m.type !== 'sw:api-request') return;
+    var port = e.ports && e.ports[0];
+    if (!port) return;
+    // Only respond if WE own this tool
+    if (m.tool !== NODE.id) {
+      // Forward through fall-api BroadcastChannel to whichever tab DOES own it
+      if (!window.fall || !window.fall.call) {
+        port.postMessage({ error: 'no fall-api shim loaded' });
+        return;
+      }
+      window.fall.call(m.tool, m.resource, m.params)
+        .then(function(r){ port.postMessage({ result: r }); })
+        .catch(function(e){ port.postMessage({ error: e.message }); });
+      return;
+    }
+    // We own it: invoke directly
+    if (!window.fall_api || !window.fall_api.list) {
+      port.postMessage({ error: 'no fall_api registry' });
+      return;
+    }
+    // Pretend we're another tab and use fall.call to ourselves (cleanest path through the registry)
+    if (window.fall && window.fall.call) {
+      window.fall.call(NODE.id, m.resource, m.params)
+        .then(function(r){ port.postMessage({ result: r }); })
+        .catch(function(e){ port.postMessage({ error: e.message }); });
+    } else {
+      port.postMessage({ error: 'fall registry unavailable' });
+    }
+  });
+
+  // Register the SW from inline Blob (scope: this page's directory; for tools at root, this is the whole origin)
+  function registerSw() {
+    try {
+      var blob = new Blob([SW_CODE], { type: 'application/javascript' });
+      var swUrl = URL.createObjectURL(blob);
+      // Note: SW scope is restricted to its URL path. Inline SWs scope only to the page that registered them.
+      // For full /api/* origin scope, the SW needs to be served from the origin root with proper Service-Worker-Allowed header.
+      // This v1 ships scope-limited; v2 will deploy a real /sw.js to each Pages root.
+      navigator.serviceWorker.register(swUrl, { scope: './' })
+        .then(function(reg){
+          try { console.log('%c◊·κ fall-sw', 'color:#5b8def;font-weight:bold', NODE.name + ' · Service Worker registered at scope ' + reg.scope); } catch(_){}
+          if (window.kcc) window.kcc.emit('sw:registered', 6, 1, { scope: reg.scope });
+        })
+        .catch(function(e){
+          try { console.log('%c◊·κ fall-sw', 'color:#c84a4a', 'SW registration failed: ' + e.message + ' (fine · fall-api still works via BroadcastChannel)'); } catch(_){}
+        });
+    } catch (e) {
+      try { console.log('%c◊·κ fall-sw', 'color:#c84a4a', 'SW unavailable: ' + e.message); } catch(_){}
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', registerSw, { once:true });
+  else registerSw();
+})();
+</script>
+<!-- /◊·κ FALL-SW SHIM -->
+
+<!-- ◊·κ FALL-HOT · watch canonical plugins · hot-reload without redeploy -->
+<script src="https://sjgant80-hub.github.io/fall-hot/fall-hot.js" defer></script>
+<script>
+  window.addEventListener('fall-hot:ready', function() {
+    window.fallHot.watch([
+      { name: 'fall-palette', url: 'https://sjgant80-hub.github.io/fall-palette/fall-palette.js' },
+      { name: 'fall-bloom',   url: 'https://sjgant80-hub.github.io/fall-bloom/bloom.js' }
+    ], { every: 5 * 60 * 1000 });
+  });
+</script>
+<!-- /◊·κ FALL-HOT -->
+
+</body>
+</html>
