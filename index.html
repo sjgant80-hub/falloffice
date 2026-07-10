@@ -833,7 +833,26 @@ function selectDoc(id){state.words.activeId=id;renderWordsSide();renderWordsPane
 function deleteDoc(){if(!confirm('delete this doc?'))return;state.words.docs=state.words.docs.filter(x=>x.id!==state.words.activeId);state.words.activeId=null;saveAll();renderWordsSide();renderWordsPane()}
 function wCmd(c,v){document.execCommand(c,false,v||null);$('#wDoc').focus()}
 function wLink(){const u=prompt('url:','https://');if(u)document.execCommand('createLink',false,u)}
-function exportDoc(fmt){const d=state.words.docs.find(x=>x.id===state.words.activeId);if(!d)return;let content,mime,ext;if(fmt==='md'){content=htmlToMd(d.html);mime='text/markdown';ext='md'}else if(fmt==='txt'){content=$('#wDoc').innerText;mime='text/plain';ext='txt'}else{content=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(d.title)}</title><style>body{font-family:Georgia,serif;max-width:720px;margin:40px auto;padding:0 20px;line-height:1.6;color:#222}h1,h2,h3{font-weight:600}</style></head><body><h1>${esc(d.title)}</h1>${d.html}</body></html>`;mime='text/html';ext='html'}downloadFile(`${slug(d.title)}.${ext}`,content,mime)}
+function exportDoc(fmt){const d=state.words.docs.find(x=>x.id===state.words.activeId);if(!d)return;let content,mime,ext;if(fmt==='md'){content=htmlToMd(d.html);mime='text/markdown';ext='md'}else if(fmt==='txt'){content=$('#wDoc').innerText;mime='text/plain';ext='txt'}else{content=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(d.title)}</title><style>body{font-family:Georgia,serif;max-width:720px;margin:40px auto;padding:0 20px;line-height:1.6;color:#222}h1,h2,h3{font-weight:600}</style></head><body><h1>${esc(d.title)}</h1>${d.html}
+
+<!-- ═══════════════════════ AUTOPILOT · fall-autopilot-kit ═══════════════════════ -->
+<script type="module">
+  try {
+    const { installAutopilot } = await import('https://sjgant80-hub.github.io/fall-autopilot-kit/src/autopilot.js');
+    const manifestRes = await fetch('https://sjgant80-hub.github.io/fall-autopilot-kit/manifests/falloffice.json');
+    const manifest = await manifestRes.json();
+    manifest.actions = manifest.actions.map(a => ({ ...a, run: async (params) => {
+      const fn = window._app?.[a.id];
+      if (typeof fn === 'function') return fn(params);
+      alert('Autopilot proposes: ' + a.name + ' · params: ' + JSON.stringify(params) + '\n\nThis tool has not yet implemented the ' + a.id + ' handler. Proposal logged to audit.');
+      return { stub: true, action: a.id, params };
+    }}));
+    manifest.state = () => ({ ...(window._app || {}), now: new Date().toISOString() });
+    installAutopilot(manifest);
+  } catch (e) { console.warn('[autopilot] init failed:', e); }
+</script>
+
+</body></html>`;mime='text/html';ext='html'}downloadFile(`${slug(d.title)}.${ext}`,content,mime)}
 
 // minimal md ↔ html
 function mdToHtml(md){return md.split(/\n\n+/).map(p=>{p=p.trim();if(!p)return'';if(p.startsWith('# '))return'<h1>'+esc(p.slice(2))+'</h1>';if(p.startsWith('## '))return'<h2>'+esc(p.slice(3))+'</h2>';if(p.startsWith('### '))return'<h3>'+esc(p.slice(4))+'</h3>';if(p.startsWith('> '))return'<blockquote>'+esc(p.slice(2))+'</blockquote>';if(p.match(/^[-*]\s/m))return'<ul>'+p.split('\n').filter(l=>l.match(/^[-*]\s/)).map(l=>'<li>'+esc(l.replace(/^[-*]\s/,''))+'</li>').join('')+'</ul>';if(p.match(/^\d+\.\s/m))return'<ol>'+p.split('\n').filter(l=>l.match(/^\d+\.\s/)).map(l=>'<li>'+esc(l.replace(/^\d+\.\s/,''))+'</li>').join('')+'</ol>';return'<p>'+esc(p).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/`(.+?)`/g,'<code>$1</code>')+'</p>'}).join('\n')}
