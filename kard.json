@@ -1,0 +1,29 @@
+{
+  "kind": "kard.v1",
+  "name": "falloffice",
+  "title": "FallOffice",
+  "retires": "an office suite subscription (Microsoft 365-style)",
+  "category": "Office, notes and design",
+  "license": "MIT",
+  "live": "https://sjgant80-hub.github.io/falloffice/",
+  "repo": "https://github.com/sjgant80-hub/falloffice",
+  "studs": {
+    "brain": {
+      "how": "inline",
+      "version": "3.1.0"
+    },
+    "mesh": {
+      "device": true,
+      "peer": false
+    },
+    "memory": {
+      "indexeddb": true,
+      "localstorage": false
+    },
+    "proof": {
+      "workflows": 0,
+      "tests": 0
+    }
+  },
+  "fits": false
+}
