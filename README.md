@@ -119,4 +119,4 @@ If you need those, you need Microsoft 365. If you don't, you need this.
 - Previous FallOffice (sales/marketing agents) preserved at [`archive/agents.html`](archive/agents.html)
 - Cascade pattern shared with [FallMap](https://github.com/sjgant80-hub/fallmap), [ACG Mapper](https://github.com/sjgant80-hub/acg-mapper), [FallForensics](https://github.com/sjgant80-hub/fallforensics)
 
-◊·κ=1 · prime 7 · MIT
+MIT
